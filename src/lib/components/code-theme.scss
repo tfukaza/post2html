@@ -1,0 +1,20 @@
+:global(pre) {
+	margin-left: 20px;
+	line-height: 0.8;
+}
+
+:global(code) {
+	font-family: var(--font-mono);
+	font-size: 0.9rem;
+	position: relative;
+}
+
+:global(.token) {
+	font-style: normal;
+	font-weight: normal;
+	color: #000000;
+}
+
+:global(.token.selector) {
+	color: #d73a49;
+}
