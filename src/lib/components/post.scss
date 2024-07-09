@@ -70,7 +70,19 @@
 				}
 			}
 
-			&.num-media-2 &.num-media-3 &.num-media-4 {
+			&.num-media-2 {
+				grid-template-columns: 1fr 1fr;
+				gap: 2px;
+
+				img {
+					object-fit: cover;
+					min-width: 100%;
+					max-height: 200px;
+				}
+			}
+
+			&.num-media-3,
+			&.num-media-4 {
 				grid-template-columns: 1fr 1fr;
 				gap: 2px;
 

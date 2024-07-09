@@ -52,7 +52,7 @@
 			<form>
 				<input
 					type="text"
-					placeholder="https://x.com/rauchg/status/1629176430461595650"
+					placeholder="https://x.com/xkcd/status/1600626775150759936"
 					bind:value={postURL}
 					on:input={() => (disableSubmit = !checkUrlValidity(postURL))}
 				/>
