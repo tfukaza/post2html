@@ -2,6 +2,7 @@
 	import type { ProcessedPost } from '../../routes/postTypes';
 
 	export let postJson: ProcessedPost | null = null;
+	$: postText = postJson ? postJson.text.split('\n') : [];
 </script>
 
 {#if postJson}
@@ -12,30 +13,23 @@
 			<div class="screen-name">@{postJson.user.screen_name}</div>
 		</div>
 		<div class="post">
-			<p>{postJson.text}</p>
+			<p>
+				{#each postText as line}{line}<br />{/each}
+			</p>
 			{#if postJson.media}
-				{#each postJson.media as media}
-					<img src={media.media_url} alt={media.display_url} />
-				{/each}
+				<a
+					class={`media num-media-${postJson.media.length}`}
+					href={`https://twitter.com/${postJson.user.screen_name}/status/${postJson.id_str}`}
+				>
+					{#each postJson.media as media}
+						<img src={media.media_url} alt={media.display_url} />
+					{/each}
+				</a>
 			{/if}
 		</div>
 	</div>
 {/if}
 
-<style lang="scss">
+<style lang="scss" global>
 	@import './post.scss';
-
-	.post-result {
-		display: flex;
-		width: 100%;
-
-		.post-container {
-			flex-basis: 50%;
-			max-width: 50%;
-		}
-		.code-container {
-			flex-basis: 50%;
-			max-width: 50%;
-		}
-	}
 </style>

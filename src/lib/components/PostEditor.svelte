@@ -3,19 +3,22 @@
 	import postStyles from './post.scss?inline';
 	import Code from '$lib/components/Code.svelte';
 	import PostSmall from './PostSmall.svelte';
+	import { removeSvelteClasses } from '$lib/process';
 
 	export let postJson: ProcessedPost | null = null;
 
 	let postDom: Element | null = null;
 
 	$: postCSS = postStyles;
-	$: postHTML = postDom ? postDom.innerHTML : '';
+	$: postHTML = postDom
+		? removeSvelteClasses(postDom.cloneNode(true)).innerHTML.replace(/<!--.*?-->/g, '')
+		: '';
 </script>
 
 <div class="post-result">
 	{#if postJson}
 		<div class="code-container">
-			<h2>Step 2: Make adjustments</h2>
+			<h2>Step 2: Set configuration</h2>
 			<p>Coming soon</p>
 			<hr />
 			<h2>Step 3: Copy the code into your website</h2>
@@ -24,9 +27,11 @@
 			<p>Paste the HTML where you want to embed the post:</p>
 			<Code copyText={postHTML} />
 		</div>
-		<div class="post-container" bind:this={postDom}>
+		<div class="post-container">
 			<h3>Preview</h3>
-			<PostSmall {postJson} />
+			<div bind:this={postDom}>
+				<PostSmall {postJson} />
+			</div>
 		</div>
 	{:else}
 		<h2 id="no-post">Submit a link above</h2>
@@ -54,7 +59,7 @@
 		}
 
 		hr {
-			margin: 20px 0;
+			margin: 40px 0;
 			opacity: 0.3;
 		}
 
@@ -67,6 +72,12 @@
 		.post-container {
 			flex-basis: 50%;
 			max-width: 50%;
+			display: flex;
+			flex-direction: column;
+			align-items: center;
+
+			> h3 {
+			}
 		}
 		.code-container {
 			flex-basis: 50%;

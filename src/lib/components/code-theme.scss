@@ -5,8 +5,10 @@
 
 :global(code) {
 	font-family: var(--font-mono);
-	font-size: 0.9rem;
+	font-size: 0.8rem;
+	font-weight: 500;
 	position: relative;
+	color: var(--color-text);
 }
 
 :global(.token) {
@@ -16,5 +18,9 @@
 }
 
 :global(.token.selector) {
-	color: #d73a49;
+	color: #da276e;
+}
+
+:global(.token.punctuation) {
+	color: #1686b5;
 }

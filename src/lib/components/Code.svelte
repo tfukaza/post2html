@@ -47,7 +47,7 @@
 			overflow-x: scroll;
 
 			&::-webkit-scrollbar {
-				height: 8px;
+				height: 4px;
 			}
 			&::-webkit-scrollbar-thumb {
 				background: #888894;

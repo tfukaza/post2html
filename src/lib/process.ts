@@ -1,4 +1,4 @@
-import { PostData, ProcessedPost } from './postTypes';
+import { PostData, ProcessedPost } from '../routes/postTypes';
 
 // getMediaUrl is taken from react-tweet library by Vercel.
 // Link: https://github.com/vercel/react-tweet/blob/main/packages/react-tweet/src/utils.ts
@@ -29,11 +29,13 @@ function processPostJson(json: PostData): ProcessedPost {
 		},
 		text,
 		media:
-			mediaDetails.map((media) => ({
-				display_url: media.display_url,
-				expanded_url: media.expanded_url,
-				media_url: getMediaUrl(media, 'medium')
-			})) || [],
+			(mediaDetails &&
+				mediaDetails.map((media: any) => ({
+					display_url: media.display_url,
+					expanded_url: media.expanded_url,
+					media_url: getMediaUrl(media, 'medium')
+				}))) ||
+			[],
 		id_str,
 		created_at,
 		favorite_count,
@@ -62,4 +64,20 @@ function processPostJson(json: PostData): ProcessedPost {
 // 	return element;
 // }
 
-export { processPostJson };
+function removeSvelteClasses(element: Node) {
+	if (element instanceof HTMLElement) {
+		element.classList.forEach((className) => {
+			if (className.startsWith('s-')) {
+				element.classList.remove(className);
+			}
+		});
+	}
+
+	for (let i = 0; i < element.childNodes.length; i++) {
+		removeSvelteClasses(element.childNodes[i]);
+	}
+
+	return element;
+}
+
+export { processPostJson, removeSvelteClasses };
