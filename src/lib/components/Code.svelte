@@ -30,7 +30,7 @@
 		<span id="ok">✅</span>
 	</button>
 	<div>
-		<Prism language="css" source={copyText} />
+		<Prism language="html" source={copyText} />
 	</div>
 </div>
 

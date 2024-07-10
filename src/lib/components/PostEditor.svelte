@@ -7,39 +7,55 @@
 
 	export let postJson: ProcessedPost | null = null;
 
-	let postDom: Element | null = null;
+	let postDom: Node | null = null;
+	let postHTML: string = '';
 
-	$: postCSS = postStyles;
-	$: postHTML = postDom
-		? removeSvelteClasses(postDom.cloneNode(true)).innerHTML.replace(/<!--.*?-->/g, '')
-		: '';
+	function finalizeHTML(): string {
+		if (!postDom) return '';
+		let html: string = removeSvelteClasses(postDom.cloneNode(true)).innerHTML;
+
+		// Minify the html
+		html = html.replace(/\>[\r\n ]+\</g, '><');
+		html = html.replace(/<!--.*?-->/g, '');
+		html = html.replace(/class=""/g, '');
+		console.log(html);
+		let css = postStyles.replace(/\n/g, '');
+
+		html = `<iframe><style>${css}</style>${html}</iframe>`;
+
+		postHTML = html;
+	}
 </script>
 
-<div class="post-result">
-	{#if postJson}
-		<div class="code-container">
-			<h2>Step 2: Set configuration</h2>
-			<p>Coming soon</p>
-			<hr />
-			<h2>Step 3: Copy the code into your website</h2>
-			<p>Paste the CSS into your stylesheet:</p>
-			<Code copyText={postCSS} />
-			<p>Paste the HTML where you want to embed the post:</p>
-			<Code copyText={postHTML} />
-		</div>
-		<div class="post-container">
-			<h3>Preview</h3>
-			<div bind:this={postDom}>
-				<PostSmall {postJson} />
-			</div>
-		</div>
-	{:else}
-		<h2 id="no-post">Submit a link above</h2>
-	{/if}
+<div bind:this={postDom}>
+	<PostSmall {postJson} actionCallback={finalizeHTML} />
 </div>
+<section>
+	<div class="post-result">
+		{#if postJson}
+			<div id="left">
+				<h2>Step 2: Set configuration</h2>
+				<p>Coming soon</p>
+			</div>
+			<div id="right">
+				<h2>Step 3: Copy the code into your website</h2>
+				<Code copyText={postHTML} />
+			</div>
+		{:else}
+			<h2 id="no-post">Submit a link above</h2>
+		{/if}
+	</div>
+</section>
 
 <style lang="scss">
 	@import '../../routes/styles.scss';
+
+	section {
+		width: 1000px;
+		border: 1px solid rgb(172, 172, 172);
+		background-color: rgb(250, 250, 250);
+		border-radius: 12px;
+	}
 
 	.post-result {
 		display: flex;
@@ -69,17 +85,11 @@
 			text-align: center;
 		}
 
-		.post-container {
+		#left {
 			flex-basis: 50%;
 			max-width: 50%;
-			display: flex;
-			flex-direction: column;
-			align-items: center;
-
-			> h3 {
-			}
 		}
-		.code-container {
+		#right {
 			flex-basis: 50%;
 			max-width: 50%;
 		}

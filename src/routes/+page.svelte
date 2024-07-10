@@ -26,7 +26,6 @@
 	}
 
 	function onSubmit(event: MouseEvent) {
-		console.log('Submitting');
 		const postID = getPostID(postURL);
 		if (postID === '') {
 			console.error('Invalid post ID');
@@ -60,9 +59,8 @@
 			</form>
 		</div>
 	</section>
-	<section id="result">
-		<PostEditor {postJson} />
-	</section>
+
+	<PostEditor {postJson} />
 </main>
 
 <style lang="scss">

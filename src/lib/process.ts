@@ -67,7 +67,7 @@ function processPostJson(json: PostData): ProcessedPost {
 function removeSvelteClasses(element: Node) {
 	if (element instanceof HTMLElement) {
 		element.classList.forEach((className) => {
-			if (className.startsWith('s-')) {
+			if (className.startsWith('s-') || className.startsWith('svelte-')) {
 				element.classList.remove(className);
 			}
 		});

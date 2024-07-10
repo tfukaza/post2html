@@ -1,7 +1,14 @@
 <script lang="ts">
 	import type { ProcessedPost } from '../../routes/postTypes';
+	import { afterUpdate } from 'svelte';
 
 	export let postJson: ProcessedPost | null = null;
+	export let actionCallback: () => void;
+
+	afterUpdate(() => {
+		actionCallback();
+	});
+
 	$: postText = postJson ? postJson.text.split('\n') : [];
 </script>
 
