@@ -16,8 +16,18 @@ export const getMediaUrl = (media: any, size: 'small' | 'medium' | 'large'): str
 };
 
 function processPostJson(json: PostData): ProcessedPost {
-	const { user, text, id_str, mediaDetails, created_at, favorite_count, conversation_count } = json;
+	const {
+		entities,
+		user,
+		text,
+		id_str,
+		mediaDetails,
+		created_at,
+		favorite_count,
+		conversation_count
+	} = json;
 	const { name, screen_name, profile_image_url_https, is_blue_verified, verified } = user;
+	const { urls, hashtags } = entities;
 
 	return {
 		user: {
@@ -33,9 +43,29 @@ function processPostJson(json: PostData): ProcessedPost {
 				mediaDetails.map((media: any) => ({
 					display_url: media.display_url,
 					expanded_url: media.expanded_url,
-					media_url: getMediaUrl(media, 'medium')
+					media_url: getMediaUrl(media, 'medium'),
+					url: media.url
 				}))) ||
 			[],
+		urls:
+			(urls &&
+				urls.map((url) => {
+					return {
+						display_url: url.display_url,
+						expanded_url: url.expanded_url,
+						url: url.url
+					};
+				})) ||
+			[],
+		hashTags:
+			(hashtags &&
+				hashtags.map((hashtag) => {
+					return {
+						text: hashtag.text
+					};
+				})) ||
+			[],
+
 		id_str,
 		created_at,
 		favorite_count,
@@ -67,7 +97,7 @@ function processPostJson(json: PostData): ProcessedPost {
 function removeSvelteClasses(element: Node) {
 	if (element instanceof HTMLElement) {
 		element.classList.forEach((className) => {
-			if (className.startsWith('s-')) {
+			if (className.startsWith('s-') || className.startsWith('svelte-')) {
 				element.classList.remove(className);
 			}
 		});

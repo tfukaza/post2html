@@ -4,12 +4,35 @@ export interface PostData {
 	created_at: string; // Post creation date in ISO format
 	display_text_range: [number, number]; // Range of text to display in the embedded version
 	entities: {
-		hashtags: any[]; // Hashtags in the post
+		hashtags: {
+			indices: [number, number]; // Range of text indices for the hashtag
+			text: string; // Hashtag text
+		}[]; // Hashtags in the post
+
 		media: any[]; // Media in the post
 		symbols: any[]; // Symbols in the post
-		urls: any[]; // URLs in the post
+		urls: {
+			display_url: string; // URL display URL
+			expanded_url: string; // URL expanded URL
+			indices: [number, number]; // Range of text indices for the URL
+			url: string; // URL
+		}[]; // URLs in the post
 		user_mentions: any[]; // User mentions in the post
 	};
+	mediaDetails: {
+		display_url: string; // Media display URL
+		expanded_url: string; // Media expanded URL
+		indices: [number, number]; // Range of text indices for the media
+		media_url_https: string; // Media URL
+		type: 'photo' | 'video' | 'animated_gif'; // Media type
+		url: string; // Media URL
+		original_info: {
+			height: number; // Media height
+			width: number; // Media width
+			focus_rects: any[]; // Focus rectangles
+		};
+		sizes: any; // Media sizes
+	}[]; // Media details
 	favorite_count: number; // Number of likes
 	id_str: string; // Post ID as a string
 	isEdited: boolean; // Whether the post was edited
@@ -43,7 +66,17 @@ export interface ProcessedPost {
 		display_url: string; // Media display URL
 		expanded_url: string; // Media expanded URL
 		media_url: string; // Media URL
+		url: string; // Media URL
 	}[];
+	urls: {
+		display_url: string; // URL display URL
+		expanded_url: string; // URL expanded URL
+		url: string; // URL
+	}[];
+	hashTags: {
+		indices: [number, number]; // Range of text indices for the hashtag
+		text: string; // Hashtag text
+	}[]; // Hashtags in the post
 
 	id_str: string; // Post ID as a string
 	created_at: string; // Post creation date in ISO format
