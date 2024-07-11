@@ -9,7 +9,26 @@
 		actionCallback();
 	});
 
-	$: postText = postJson ? postJson.text.split('\n') : [];
+	function processText(postJson: ProcessedPost): string {
+		// Replace each display_url with an anchor tag
+		let text = postJson.text;
+		postJson.urls.forEach((url) => {
+			text = text.replace(url.url, `<a href="${url.expanded_url}">${url.display_url}</a>`);
+		});
+		postJson.hashTags.forEach((hashTag) => {
+			text = text.replace(
+				'#' + hashTag.text,
+				`<a href="https://twitter.com/hashtag/${hashTag.text}">#${hashTag.text}</a>`
+			);
+		});
+		// Remove any media links from text
+		postJson.media.forEach((media) => {
+			text = text.replace(media.url, '');
+		});
+		return text.replace(/\n/g, '<br />');
+	}
+
+	$: postText = postJson ? processText(postJson) : '';
 </script>
 
 {#if postJson}
@@ -21,7 +40,7 @@
 		</div>
 		<div class="post">
 			<p>
-				{#each postText as line}{line}<br />{/each}
+				{@html postText}
 			</p>
 			{#if postJson.media}
 				<a

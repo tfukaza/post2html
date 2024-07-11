@@ -11,7 +11,7 @@
 	let postHTML: string = '';
 
 	function finalizeHTML(): void {
-		if (!postDom) return '';
+		if (!postDom) return;
 		let html: string = removeSvelteClasses(postDom.cloneNode(true)).innerHTML;
 
 		// Minify the html
