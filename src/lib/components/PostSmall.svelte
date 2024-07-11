@@ -29,10 +29,15 @@
 	}
 
 	$: postText = postJson ? processText(postJson) : '';
+
+	let className = 'post-small';
+	if (postJson && postJson.media.length > 0) {
+		className += ' has-media';
+	}
 </script>
 
 {#if postJson}
-	<div class="post-small">
+	<div class={className}>
 		<div class="profile">
 			<img src={postJson.user.profile_image_url_https} alt={postJson.user.name} />
 			<div class="name">{postJson.user.name}</div>

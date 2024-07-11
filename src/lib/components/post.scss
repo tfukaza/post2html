@@ -1,4 +1,8 @@
 // @scope (#embedded-post) {
+#embedded-post {
+	width: 100%;
+	container-type: inline-size;
+}
 .post-small {
 	border: 1px solid #ccc;
 	background-color: #ffffff;
@@ -6,6 +10,10 @@
 	padding: 20px;
 	margin: 0px;
 	max-width: 300px;
+	width: 100%;
+	box-sizing: border-box;
+
+	margin: 0px auto 0px auto;
 
 	// text-decoration: none;
 	// color: #333;
@@ -64,6 +72,11 @@
 			border-radius: 8px;
 			overflow: hidden;
 			display: grid;
+			justify-items: center;
+
+			&[class^='num-media-'] {
+				border: 1px solid #ccc;
+			}
 
 			&.num-media-1 {
 				grid-template-columns: 1fr;
@@ -72,7 +85,7 @@
 				img {
 					object-fit: cover;
 					min-width: 100%;
-					max-height: 200px;
+					max-height: 300px;
 				}
 			}
 
@@ -96,6 +109,41 @@
 					object-fit: cover;
 					min-width: 100%;
 					max-height: 100px;
+				}
+			}
+		}
+	}
+}
+
+@container (min-width: 500px) {
+	.has-media {
+		max-width: 500px;
+	}
+
+	.post-small {
+		max-width: 500px;
+	}
+}
+
+@container (min-width: 800px) {
+	.has-media {
+		max-width: 800px;
+
+		.post {
+			display: flex;
+			column-gap: 20px;
+			flex-wrap: wrap;
+
+			p {
+				flex: 1;
+			}
+
+			.media {
+				flex: 1;
+
+				max-height: 350px !important;
+				img {
+					max-height: 350px !important;
 				}
 			}
 		}

@@ -29,8 +29,6 @@ function processPostJson(json: PostData): ProcessedPost {
 	const { name, screen_name, profile_image_url_https, is_blue_verified, verified } = user;
 	const { urls, hashtags } = entities;
 
-	console.log(json);
-
 	return {
 		user: {
 			name,
