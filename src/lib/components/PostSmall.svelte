@@ -30,10 +30,10 @@
 
 	$: postText = postJson ? processText(postJson) : '';
 
-	let className = 'post-small';
-	if (postJson && postJson.media.length > 0) {
-		className += ' has-media';
-	}
+	$: className =
+		'post-small' +
+		(postJson && postJson.media.length > 0 ? ' has-media' : '') +
+		(postText && postText.length > 0 ? ' has-text' : '');
 </script>
 
 {#if postJson}
@@ -43,21 +43,20 @@
 			<div class="name">{postJson.user.name}</div>
 			<div class="screen-name">@{postJson.user.screen_name}</div>
 		</div>
-		<div class="post">
-			<p>
-				{@html postText}
-			</p>
-			{#if postJson.media}
-				<a
-					class={`media num-media-${postJson.media.length}`}
-					href={`https://twitter.com/${postJson.user.screen_name}/status/${postJson.id_str}`}
-				>
-					{#each postJson.media as media}
-						<img src={media.media_url} alt={media.display_url} />
-					{/each}
-				</a>
-			{/if}
-		</div>
+
+		<p class="post">
+			{@html postText}
+		</p>
+		{#if postJson.media}
+			<a
+				class={`media num-media-${postJson.media.length}`}
+				href={`https://twitter.com/${postJson.user.screen_name}/status/${postJson.id_str}`}
+			>
+				{#each postJson.media as media}
+					<img src={media.media_url} alt={media.display_url} />
+				{/each}
+			</a>
+		{/if}
 	</div>
 {/if}
 
