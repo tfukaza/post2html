@@ -1,8 +1,10 @@
 <script lang="ts">
 	import type { ProcessedPost } from '../../routes/postTypes';
-	import postStyles from './post.scss?inline';
+	// import postStyles from './post.scss?inline';
+	import postStyles from './post_scroll.scss?inline';
 	import Code from '$lib/components/Code.svelte';
 	import PostSmall from './PostSmall.svelte';
+	import PostScroll from './PostScroll.svelte';
 	import { removeSvelteClasses } from '$lib/process';
 
 	export let postJson: ProcessedPost | null = null;
@@ -18,7 +20,6 @@
 		html = html.replace(/\>[\r\n ]+\</g, '><');
 		html = html.replace(/<!--.*?-->/g, '');
 		html = html.replace(/class=""/g, '');
-		console.log(html);
 		let css = postStyles.replace(/\n/g, '');
 
 		html = `<div id="embedded-post"><style>${css}</style>${html}</div>`;
@@ -48,7 +49,7 @@
 		<div class={`preview-container ${previewMode}`}>
 			<div id="preview-scroll">
 				<div bind:this={postDom} style="display:none">
-					<PostSmall {postJson} actionCallback={finalizeHTML} />
+					<PostScroll {postJson} actionCallback={finalizeHTML} />
 				</div>
 
 				{@html postHTML}
