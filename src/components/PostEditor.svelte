@@ -1,13 +1,11 @@
 <script lang="ts">
-	import type { ProcessedPost } from '../../routes/postTypes';
-	// import postStyles from './post.scss?inline';
-	import postStyles from './post_scroll.scss?inline';
-	import Code from '$lib/components/Code.svelte';
-	import PostSmall from './PostSmall.svelte';
-	import PostScroll from './PostScroll.svelte';
-	import { removeSvelteClasses } from '$lib/process';
+	import type { ProcessedXData } from '$lib/x_types';
+	import postStyles from '$components/embed/post_scroll.scss?inline';
+	import Code from '$components/Code.svelte';
+	import PostScroll from './embed/PostScroll.svelte';
+	import { removeSvelteClasses } from '$lib/helper';
 
-	export let postJson: ProcessedPost | null = null;
+	export let postJson: ProcessedXData | null = null;
 
 	let postDom: Node | null = null;
 	let postHTML: string = '';
@@ -109,7 +107,7 @@
 {/if}
 
 <style lang="scss">
-	@import '../../routes/styles.scss';
+	@import '../routes/styles.scss';
 
 	#preview {
 		z-index: 1;

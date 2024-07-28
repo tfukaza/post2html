@@ -1,5 +1,5 @@
 /* JSON returned by X's embedding API */
-export interface PostData {
+export interface OriginalXData {
 	conversation_count: number; // Number of replies
 	created_at: string; // Post creation date in ISO format
 	display_text_range: [number, number]; // Range of text to display in the embedded version
@@ -53,7 +53,7 @@ export interface PostData {
 	__typename: string; // Post type
 }
 
-export interface ProcessedPost {
+export interface ProcessedXData {
 	user: {
 		name: string; // User name
 		screen_name: string; // User screen name

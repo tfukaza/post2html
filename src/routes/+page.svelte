@@ -1,10 +1,10 @@
 <script lang="ts">
-	import PostEditor from '$lib/components/PostEditor.svelte';
-	import { processPostJson } from '../lib/process';
-	import type { ProcessedPost } from './postTypes';
+	import PostEditor from '$components/PostEditor.svelte';
+	import { processXJson } from '$lib/x_process';
+	import type { ProcessedXData } from '$lib/x_types';
 
 	let postURL: string = '';
-	let postJson: ProcessedPost | null = null;
+	let postJson: ProcessedXData | null = null;
 
 	let disableSubmit = !checkUrlValidity(postURL);
 
@@ -31,17 +31,17 @@
 			console.error('Invalid post ID');
 			return;
 		}
-		fetch(`/api/proxy?post-id=${postID}`)
+		fetch(`/api/proxy_x?post-id=${postID}`)
 			.then((response) => response.json())
 			.then((data) => {
-				postJson = processPostJson(data);
+				postJson = processXJson(data);
 			});
 	}
 </script>
 
 <svelte:head>
-	<title>Home</title>
-	<meta name="description" content="Svelte demo app" />
+	<title>post2html</title>
+	<meta name="description" content="Better embeds for Twitter posts" />
 </svelte:head>
 
 <main>

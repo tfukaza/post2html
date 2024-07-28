@@ -1,15 +1,26 @@
+const TWEET_ID = /^[0-9]+$/; // Regular expression for a tweet ID
+const SYNDICATION_URL = 'https://cdn.syndication.twimg.com'; // URL of twitter's embedding service
+
+/**
+ * Calculates the token for a tweet ID
+ * This function was taken from react-tweet library by Vercel.
+ * Link: https://github.com/vercel/react-tweet
+ * @param id
+ * @returns
+ */
 function getToken(id: string) {
 	return ((Number(id) / 1e15) * Math.PI).toString(6 ** 2).replace(/(0+|\.)/g, '');
 }
 
-const TWEET_ID = /^[0-9]+$/;
-const SYNDICATION_URL = 'https://cdn.syndication.twimg.com';
-
+/**
+ * Fetches a tweet from Twitter's syndication service
+ * This function was adapted from react-tweet library by Vercel.
+ * Link: https://github.com/vercel/react-tweet
+ * @param param0
+ * @returns
+ */
 export async function GET({ url }) {
 	const postID = url.searchParams.get('post-id');
-
-	// The following code was adapted from react-tweet library by Vercel.
-	// Link: https://github.com/vercel/react-tweet
 	if (!postID || !TWEET_ID.test(postID)) {
 		return new Response('Invalid post ID.', { status: 400 });
 	}
@@ -41,22 +52,24 @@ export async function GET({ url }) {
 
 	const res = await fetch(requestUrl.toString());
 
-	const isJson = res.headers.get('content-type')?.includes('application/json');
-	const data = isJson ? await res.json() : undefined;
-
-	if (res.ok) {
-		if (data?.__typename === 'TweetTombstone') {
-			return new Response('This post is not available', { status: 400 });
-		}
-		return new Response(JSON.stringify(data), {
-			headers: { 'content-type': 'application/json' },
-			status: 200
-		});
+	if (!res.ok) {
+		return new Response('An error occurred while fetching the post', { status: 500 });
 	}
-
 	if (res.status === 404) {
 		return new Response('This post is not available', { status: 400 });
 	}
+	if (res.headers.get('content-type')?.includes('application/json') == false) {
+		return new Response('The data returned for this post is not in JSON format', { status: 500 });
+	}
 
-	return new Response('An error occurred while fetching the post', { status: 500 });
+	const data = await res.json();
+
+	if (data?.__typename === 'TweetTombstone') {
+		return new Response('This post is not available', { status: 400 });
+	}
+
+	return new Response(JSON.stringify(data), {
+		headers: { 'content-type': 'application/json' },
+		status: 200
+	});
 }
