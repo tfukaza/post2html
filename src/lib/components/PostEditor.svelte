@@ -1,8 +1,10 @@
 <script lang="ts">
 	import type { ProcessedPost } from '../../routes/postTypes';
-	import postStyles from './post.scss?inline';
+	// import postStyles from './post.scss?inline';
+	import postStyles from './post_scroll.scss?inline';
 	import Code from '$lib/components/Code.svelte';
 	import PostSmall from './PostSmall.svelte';
+	import PostScroll from './PostScroll.svelte';
 	import { removeSvelteClasses } from '$lib/process';
 
 	export let postJson: ProcessedPost | null = null;
@@ -12,16 +14,50 @@
 
 	function finalizeHTML(): void {
 		if (!postDom) return;
-		let html: string = removeSvelteClasses(postDom.cloneNode(true)).innerHTML;
+
+		let dom: HTMLElement = postDom.cloneNode(true) as HTMLElement;
+		let post = dom.querySelector('.post-small');
 
 		// Minify the html
+		let tmpDom = document.createElement('div');
+		tmpDom.appendChild(post);
+		removeSvelteClasses(tmpDom);
+		let html: string = tmpDom.innerHTML;
 		html = html.replace(/\>[\r\n ]+\</g, '><');
 		html = html.replace(/<!--.*?-->/g, '');
 		html = html.replace(/class=""/g, '');
-		console.log(html);
-		let css = postStyles.replace(/\n/g, '');
 
-		html = `<div id="embedded-post"><style>${css}</style>${html}</div>`;
+		// Minify Css
+		let css = postStyles.replace(/\n/g, '');
+		css = css.replace(/\/\*.*?\*\//g, '');
+		// ; don't need any spaces after them
+		css = css.replace(/;\s*/g, ';');
+		// { and } don't need any spaces before and after them
+		css = css.replace(/\s*\{\s*/g, '{');
+		css = css.replace(/\s*\}\s*/g, '}');
+
+		// Minify Js
+		let script = dom.querySelector('script')?.innerHTML || '';
+		script = script.replace(/\n/g, ''); // Remove new lines
+		script = script.replace(/\/\/.*?\n/g, ''); // Remove single line comments
+		script = script.replace(/\/\*.*?\*\//g, ''); // Remove multi line comments
+		script = script.replace(/\s+/g, ' '); // Remove extra spaces
+		// Consecutive let and const declarations can be combined using commas
+		script = script.replace(/let (.*?); let (.*?);/g, 'let $1, $2;');
+		//unary operators (like +) don't need spaces between them and their operands
+		script = script.replace(/\s*([\+\-\*\/\=\%\&\|\!\?\:\,<>])\s*/g, '$1');
+		// ; Don't need any spaces after them
+		script = script.replace(/;\s*/g, ';');
+		// Remove spaces before and after brackets
+		script = script.replace(/\s*\(\s*/g, '(');
+		script = script.replace(/\s*\)\s*/g, ')');
+		script = script.replace(/\s*\{\s*/g, '{');
+		script = script.replace(/\s*\}\s*/g, '}');
+
+		html =
+			`<div id="embedded-post"><script` +
+			`>${script}</script` +
+			`><style>${css}</style>${html}</div>`;
 
 		postHTML = html;
 	}
@@ -48,7 +84,7 @@
 		<div class={`preview-container ${previewMode}`}>
 			<div id="preview-scroll">
 				<div bind:this={postDom} style="display:none">
-					<PostSmall {postJson} actionCallback={finalizeHTML} />
+					<PostScroll {postJson} actionCallback={finalizeHTML} />
 				</div>
 
 				{@html postHTML}
