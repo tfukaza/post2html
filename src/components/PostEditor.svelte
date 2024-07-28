@@ -1,32 +1,37 @@
 <script lang="ts">
 	import type { ProcessedXData } from '$lib/x_types';
-	import postStyles from '$components/embed/post_scroll.scss?inline';
+
 	import Code from '$components/Code.svelte';
-	import PostScroll from './embed/PostScroll.svelte';
 	import { removeSvelteClasses } from '$lib/helper';
+	import XPost from './embed/XPost.svelte';
 
 	export let postJson: ProcessedXData | null = null;
 
 	let postDom: Node | null = null;
-	let postHTML: string = '';
+	let postHTML: string = 'https://x.com/xkcd/status/1617278817151721475';
 
 	function finalizeHTML(): void {
 		if (!postDom) return;
 
 		let dom: HTMLElement = postDom.cloneNode(true) as HTMLElement;
-		let post = dom.querySelector('.post-small');
+		let post = dom.querySelector('div');
+		if (!post) return;
 
 		// Minify the html
 		let tmpDom = document.createElement('div');
 		tmpDom.appendChild(post);
 		removeSvelteClasses(tmpDom);
-		let html: string = tmpDom.innerHTML;
-		html = html.replace(/\>[\r\n ]+\</g, '><');
-		html = html.replace(/<!--.*?-->/g, '');
-		html = html.replace(/class=""/g, '');
 
 		// Minify Css
-		let css = postStyles.replace(/\n/g, '');
+		let cssDom = Array.prototype.slice
+			.call(dom.querySelectorAll('style'))
+			.concat(Array.prototype.slice.call(post.querySelectorAll('style')));
+		let css = '';
+		cssDom.forEach((style) => {
+			console.log(style.innerHTML);
+			css += style.innerHTML;
+			style.innerHTML = '';
+		});
 		css = css.replace(/\/\*.*?\*\//g, '');
 		// ; don't need any spaces after them
 		css = css.replace(/;\s*/g, ';');
@@ -35,29 +40,41 @@
 		css = css.replace(/\s*\}\s*/g, '}');
 
 		// Minify Js
-		let script = dom.querySelector('script')?.innerHTML || '';
-		script = script.replace(/\n/g, ''); // Remove new lines
-		script = script.replace(/\/\/.*?\n/g, ''); // Remove single line comments
-		script = script.replace(/\/\*.*?\*\//g, ''); // Remove multi line comments
-		script = script.replace(/\s+/g, ' '); // Remove extra spaces
-		// Consecutive let and const declarations can be combined using commas
-		script = script.replace(/let (.*?); let (.*?);/g, 'let $1, $2;');
-		//unary operators (like +) don't need spaces between them and their operands
-		script = script.replace(/\s*([\+\-\*\/\=\%\&\|\!\?\:\,<>])\s*/g, '$1');
-		// ; Don't need any spaces after them
-		script = script.replace(/;\s*/g, ';');
-		// Remove spaces before and after brackets
-		script = script.replace(/\s*\(\s*/g, '(');
-		script = script.replace(/\s*\)\s*/g, ')');
-		script = script.replace(/\s*\{\s*/g, '{');
-		script = script.replace(/\s*\}\s*/g, '}');
+		let scriptDom = post.querySelector('script');
+		let script = '';
+		if (scriptDom) {
+			script = scriptDom.innerHTML;
+			script = script.replace(/\n/g, ''); // Remove new lines
+			script = script.replace(/\/\/.*?\n/g, ''); // Remove single line comments
+			script = script.replace(/\/\*.*?\*\//g, ''); // Remove multi line comments
+			script = script.replace(/\s+/g, ' '); // Remove extra spaces
+			// Consecutive let and const declarations can be combined using commas
+			script = script.replace(/let (.*?); let (.*?);/g, 'let $1, $2;');
+			//unary operators (like +) don't need spaces between them and their operands
+			script = script.replace(/\s*([\+\-\*\/\=\%\&\|\!\?\:\,<>])\s*/g, '$1');
+			// ; Don't need any spaces after them
+			script = script.replace(/;\s*/g, ';');
+			// Remove spaces before and after brackets
+			script = script.replace(/\s*\(\s*/g, '(');
+			script = script.replace(/\s*\)\s*/g, ')');
+			script = script.replace(/\s*\{\s*/g, '{');
+			script = script.replace(/\s*\}\s*/g, '}');
+			scriptDom.innerHTML = '';
+		}
 
-		html =
-			`<div id="embedded-post"><script` +
-			`>${script}</script` +
-			`><style>${css}</style>${html}</div>`;
+		let html: string = tmpDom.innerHTML;
+		html = html.replace(/\>[\r\n ]+\</g, '><');
+		html = html.replace(/<!--.*?-->/g, '');
+		html = html.replace(/class=""/g, '');
 
-		postHTML = html;
+		let finalHtml = `<div id="embedded-post">`;
+		if (script) {
+			finalHtml += `<script>${script}<\/script>`;
+		}
+		finalHtml += `<style>${css}<\/style>`;
+		finalHtml += `${html}<\/div>`;
+
+		postHTML = finalHtml;
 	}
 
 	let previewMode: string = 'mobile';
@@ -82,7 +99,7 @@
 		<div class={`preview-container ${previewMode}`}>
 			<div id="preview-scroll">
 				<div bind:this={postDom} style="display:none">
-					<PostScroll {postJson} actionCallback={finalizeHTML} />
+					<XPost {postJson} actionCallback={finalizeHTML} />
 				</div>
 
 				{@html postHTML}
