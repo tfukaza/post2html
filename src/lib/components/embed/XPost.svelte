@@ -9,6 +9,7 @@
 
 	export let postJson: ProcessedXData | null = null;
 	export let actionCallback: () => void;
+	export let imageStyle: 'carousel' | 'grid' = 'carousel';
 
 	afterUpdate(() => {
 		actionCallback();
@@ -63,8 +64,13 @@
 			</p>
 		</div>
 		{#if postJson.media.length > 0}
-			<!-- <XPostMediaCarousel {postJson} /> -->
-			<XPostMediaGrid {postJson} />
+			{#if imageStyle === 'carousel'}
+				<XPostMediaCarousel {postJson} />
+			{:else if imageStyle === 'grid'}
+				<XPostMediaGrid {postJson} />
+			{:else}
+				<XPostMediaCarousel {postJson} />
+			{/if}
 		{/if}
 	</div>
 {/if}

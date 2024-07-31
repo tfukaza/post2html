@@ -5,6 +5,12 @@
 	import { removeSvelteClasses } from '$lib/helper';
 	import XPost from './embed/XPost.svelte';
 
+	import * as Select from '$lib/components/ui/select';
+	import * as Tabs from '$lib/components/ui/tabs';
+	import * as Tooltip from '$lib/components/ui/tooltip';
+
+	import IconHelp from '~icons/material-symbols/help';
+
 	export let postJson: ProcessedXData | null = null;
 
 	let postDom: Node | null = null;
@@ -77,7 +83,9 @@
 		postHTML = finalHtml;
 	}
 
+	let imageStyle: string = 'grid';
 	let previewMode: string = 'mobile';
+
 	$: mobileActive = previewMode === 'mobile';
 	$: tabletActive = previewMode === 'tablet';
 	$: desktopActive = previewMode === 'desktop';
@@ -85,8 +93,7 @@
 
 {#if postJson}
 	<div id="preview">
-		<div id="preview-options">
-			<button on:click={() => (previewMode = 'mobile')} class={mobileActive ? 'active' : ''}>
+		<!-- <button on:click={() => (previewMode = 'mobile')} class={mobileActive ? 'active' : ''}>
 				Mobile
 			</button>
 			<button on:click={() => (previewMode = 'tablet')} class={tabletActive ? 'active' : ''}>
@@ -95,11 +102,31 @@
 			<button on:click={() => (previewMode = 'desktop')} class={desktopActive ? 'active' : ''}>
 				Desktop
 			</button>
+			 -->
+		<div id="preview-options">
+			<Tabs.Root value="mobile">
+				<Tabs.List>
+					<Tabs.Trigger value="mobile" on:click={() => (previewMode = 'mobile')}
+						>Mobile</Tabs.Trigger
+					>
+					<Tabs.Trigger value="tablet" on:click={() => (previewMode = 'tablet')}
+						>Tablet</Tabs.Trigger
+					>
+					<Tabs.Trigger value="desktop" on:click={() => (previewMode = 'desktop')}
+						>Desktop</Tabs.Trigger
+					>
+				</Tabs.List>
+				<!-- <Tabs.Content value="account">
+				  Make changes to your account here.
+				</Tabs.Content>
+				<Tabs.Content value="password">Change your password here.</Tabs.Content> -->
+			</Tabs.Root>
 		</div>
+
 		<div class={`preview-container ${previewMode}`}>
 			<div id="preview-scroll">
 				<div bind:this={postDom} style="display:none">
-					<XPost {postJson} actionCallback={finalizeHTML} />
+					<XPost {postJson} actionCallback={finalizeHTML} {imageStyle} />
 				</div>
 
 				{@html postHTML}
@@ -112,7 +139,26 @@
 	<div class="post-result">
 		<div id="left">
 			<h2>Step 2: Set configuration</h2>
-			<p>Coming soon</p>
+			<h3>Image Style</h3>
+			<Tooltip.Root>
+				<Tooltip.Trigger><IconHelp /></Tooltip.Trigger>
+				<Tooltip.Content>
+					<p>Choose the style the images will be displayed:</p>
+					<ul class="list-inside list-disc">
+						<li>Grid (default): Images will be displayed in a grid layout</li>
+						<li>Carousel: Images will be displayed in a carousel</li>
+					</ul>
+				</Tooltip.Content>
+			</Tooltip.Root>
+			<Select.Root onSelectedChange={(e) => (imageStyle = e.value)}>
+				<Select.Trigger class="w-[180px]">
+					<Select.Value placeholder="Select..." />
+				</Select.Trigger>
+				<Select.Content>
+					<Select.Item value="grid">Grid (default)</Select.Item>
+					<Select.Item value="carousel">Carousel</Select.Item>
+				</Select.Content>
+			</Select.Root>
 		</div>
 		<div id="right">
 			<h2>Step 3: Copy the code into your website</h2>
@@ -124,38 +170,29 @@
 {/if}
 
 <style lang="scss">
-	@import '../routes/styles.scss';
+	@import '../../routes/styles.scss';
 
 	#preview {
 		z-index: 1;
+		position: relative;
+
 		display: flex;
-		justify-content: center;
-		align-items: center;
 		flex-direction: column;
+		align-items: center;
+
+		#preview-options {
+			// position: absolute;
+			// top: 530px;
+			// left: 50%;
+			// transform: translate(-50%, 0);
+			z-index: 2;
+		}
 	}
 
-	#preview-options {
-		display: flex;
-		gap: 1px;
-		background-color: rgb(239, 239, 239);
-		border-radius: 8px;
-		border: 1px solid rgb(239, 239, 239);
-		overflow: hidden;
+	.list-disc {
+		padding-left: 20px;
 
-		button {
-			padding: 10px 20px;
-			border: none;
-			background-color: rgb(255, 255, 255);
-			cursor: pointer;
-			transition: background-color 0.2s;
-			&:hover {
-				background-color: rgb(220, 220, 220);
-			}
-		}
-
-		.active {
-			background-color: rgb(220, 220, 220);
-		}
+		list-style-type: disc;
 	}
 
 	.preview-container {
@@ -168,9 +205,12 @@
 		box-sizing: border-box;
 		// Inset line
 
-		box-shadow: 3px -3px 4px -2px rgba(33, 73, 104, 0.564) inset,
-			0px 0px 6px 0px rgba(63, 78, 96, 0.55) inset, 0px 0px 0px 5px rgb(239, 239, 239) inset,
-			0px 0px 0px 16px rgb(43, 45, 47) inset, 0px 40px 50px 12px rgb(63 81 100 / 30%);
+		box-shadow:
+			3px -3px 4px -2px rgba(33, 73, 104, 0.564) inset,
+			0px 0px 6px 0px rgba(63, 78, 96, 0.55) inset,
+			0px 0px 0px 5px rgb(239, 239, 239) inset,
+			0px 0px 0px 16px rgb(43, 45, 47) inset,
+			0px 40px 50px 12px rgb(63 81 100 / 30%);
 		border-radius: 40px;
 
 		transition: width 0.2s;
@@ -218,8 +258,8 @@
 		box-sizing: border-box;
 
 		width: 1000px;
-		border: 1px solid rgb(172, 172, 172);
-		background-color: rgb(250, 250, 250);
+		border: 1px solid rgb(223, 223, 223);
+		background-color: rgb(255, 255, 255);
 		border-radius: 16px;
 
 		h1 {
@@ -228,8 +268,14 @@
 		}
 
 		h2 {
-			margin: 0;
+			margin-bottom: 8px;
 			text-align: left;
+		}
+
+		h3 {
+			margin-bottom: 4px;
+			text-align: left;
+			font-size: 0.9rem;
 		}
 
 		hr {

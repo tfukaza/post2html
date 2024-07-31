@@ -3,6 +3,10 @@
 	import { processXJson } from '$lib/x_process';
 	import type { ProcessedXData } from '$lib/x_types';
 
+	import { Input } from "$lib/components/ui/input";
+	import { Button } from "$lib/components/ui/button";
+
+
 	let postURL: string = '';
 	let postJson: ProcessedXData | null = null;
 
@@ -49,13 +53,13 @@
 		<div class="input-link">
 			<h1>Step 1: Paste the X (Twitter) link below</h1>
 			<form>
-				<input
+				<Input 
 					type="text"
-					placeholder="https://x.com/xkcd/status/1600626775150759936"
+					placeholder="Paste the X (Twitter) link here"
 					bind:value={postURL}
 					on:input={() => (disableSubmit = !checkUrlValidity(postURL))}
 				/>
-				<button class={disableSubmit ? 'disable' : ''} on:click={onSubmit}>Submit</button>
+				<Button class={disableSubmit ? 'disable' : ''} on:click={onSubmit}>Submit</Button>
 			</form>
 		</div>
 	</section>
@@ -85,9 +89,9 @@
 		width: 100%;
 		margin: 20px 0;
 
-		border: 1px solid rgb(172, 172, 172);
-		background-color: rgb(250, 250, 250);
-		border-radius: 12px;
+		// border: 1px solid rgb(172, 172, 172);
+		// background-color: rgb(250, 250, 250);
+		// border-radius: 12px;
 	}
 
 	#input {
@@ -109,36 +113,10 @@
 
 		form {
 			display: flex;
+			gap: 20px;
 			margin: 0px calc(50% - 200px);
 		}
 
-		input {
-			font-family: var(--font-mono);
-			height: 30px;
-			width: 400px;
-			margin: 0;
-			padding: 0 10px;
-			box-sizing: border-box;
-			border: 1px solid rgb(172, 172, 172);
-			border-radius: 5px 0px 0px 5px;
-			font-size: 0.9rem;
-		}
-
-		button {
-			height: 30px;
-			padding: 0 10px;
-			box-sizing: border-box;
-			font-size: 0.9rem;
-			background-color: rgb(59, 60, 61);
-			color: rgb(255, 255, 255);
-			border: none;
-			border-radius: 0px 5px 5px 0px;
-			cursor: pointer;
-
-			&.disable {
-				background-color: rgb(172, 172, 172);
-				cursor: not-allowed;
-			}
-		}
+		
 	}
 </style>
