@@ -8,19 +8,19 @@
 	font-size: 0.8rem;
 	font-weight: 500;
 	position: relative;
-	color: var(--color-text);
+	color: #dedede;
 }
 
 :global(.token) {
 	font-style: normal;
 	font-weight: normal;
-	color: #000000;
+	color: #e5e5e5;
 }
 
 :global(.token.selector) {
-	color: #da276e;
+	color: #ff4f95;
 }
 
 :global(.token.punctuation) {
-	color: #1686b5;
+	color: #69d2ff;
 }

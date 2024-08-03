@@ -1,0 +1,339 @@
+<script lang="ts">
+	import type { ProcessedXData } from '$lib/x_types';
+
+	import Code from '$components/Code.svelte';
+	import { removeSvelteClasses } from '$lib/helper';
+	import XPost from './embed/XPost.svelte';
+
+	import * as Select from '$lib/components/ui/select';
+	import * as Tabs from '$lib/components/ui/tabs';
+	import * as Tooltip from '$lib/components/ui/tooltip';
+
+	import IconHelp from '~icons/material-symbols/help';
+	import { postConfig, postHTML, postJson } from '$components/store';
+	import { onMount } from 'svelte';
+
+	// export let postJson: ProcessedXData | null = null;
+
+	let postDom: Node | null = null;
+
+	let postPreviewHTML: string = '';
+
+	let postConfigData = {
+		imageStyle: 'grid'
+	};
+
+	postConfig.subscribe((value) => {
+		// console.log(value);
+		postConfigData = value;
+	});
+	let postJsonData: ProcessedXData | null = null;
+	postJson.subscribe((value) => {
+		postJsonData = value;
+	});
+
+	function finalizeHTML(): void {
+		if (!postDom) return;
+
+		let dom: HTMLElement = postDom.cloneNode(true) as HTMLElement;
+		let post = dom.querySelector('div');
+		if (!post) return;
+
+		// Minify the html
+		let tmpDom = document.createElement('div');
+		tmpDom.appendChild(post);
+		removeSvelteClasses(tmpDom);
+
+		// Minify Css
+		let cssDom = Array.prototype.slice
+			.call(dom.querySelectorAll('style'))
+			.concat(Array.prototype.slice.call(post.querySelectorAll('style')));
+		let css = '';
+		cssDom.forEach((style) => {
+			// console.log(style.innerHTML);
+			css += style.innerHTML;
+			style.innerHTML = '';
+		});
+		// Remove comments
+		css = css.replace(/\/\/.*?\n/g, '');
+		css = css.replace(/\/\*.*?\*\//g, '');
+		// ; don't need any spaces after them
+		css = css.replace(/;\s*/g, ';');
+		// { and } don't need any spaces before and after them
+		css = css.replace(/\s*\{\s*/g, '{');
+		css = css.replace(/\s*\}\s*/g, '}');
+
+		// Minify Js
+		let scriptDom = post.querySelector('script');
+		let script = '';
+		if (scriptDom) {
+			script = scriptDom.innerHTML;
+			script = script.replace(/\n/g, ''); // Remove new lines
+			script = script.replace(/\/\/.*?\n/g, ''); // Remove single line comments
+			script = script.replace(/\/\*.*?\*\//g, ''); // Remove multi line comments
+			script = script.replace(/\s+/g, ' '); // Remove extra spaces
+			// Consecutive let and const declarations can be combined using commas
+			script = script.replace(/let (.*?); let (.*?);/g, 'let $1, $2;');
+			//unary operators (like +) don't need spaces between them and their operands
+			script = script.replace(/\s*([\+\-\*\/\=\%\&\|\!\?\:\,<>])\s*/g, '$1');
+			// ; Don't need any spaces after them
+			script = script.replace(/;\s*/g, ';');
+			// Remove spaces before and after brackets
+			script = script.replace(/\s*\(\s*/g, '(');
+			script = script.replace(/\s*\)\s*/g, ')');
+			script = script.replace(/\s*\{\s*/g, '{');
+			script = script.replace(/\s*\}\s*/g, '}');
+			scriptDom.innerHTML = '';
+		}
+
+		let html: string = tmpDom.innerHTML;
+		html = html.replace(/\>[\r\n ]+\</g, '><');
+		html = html.replace(/<!--.*?-->/g, '');
+		html = html.replace(/class=""/g, '');
+
+		let finalHtml = `<div id="embedded-post">`;
+		if (script) {
+			finalHtml += `<script>${script}<\/script>`;
+		}
+		finalHtml += `<style>${css}<\/style>`;
+		finalHtml += `${html}<\/div>`;
+
+		postPreviewHTML = finalHtml;
+		postHTML.set(finalHtml);
+	}
+
+	let imageStyle: string = 'grid';
+	let previewMode: string = 'mobile';
+
+	$: mobileActive = previewMode === 'mobile';
+	$: tabletActive = previewMode === 'tablet';
+	$: desktopActive = previewMode === 'desktop';
+
+	let previewContainer: HTMLElement;
+
+	onMount(() => {
+		// if (!previewContainer) return;
+		const resizeObserver = new ResizeObserver((entries) => {
+			for (let entry of entries) {
+				resizePreview(entry.target as HTMLElement);
+			}
+		});
+		resizeObserver.observe(previewContainer);
+		resizePreview(previewContainer);
+	});
+
+	function resizePreview(node: HTMLElement): void {
+		console.debug('Resizing preview');
+		if (!node) return;
+
+		console.log(node.clientWidth, node.clientHeight);
+		let width = node.clientWidth;
+		let height = node.clientHeight;
+
+		document.documentElement.style.setProperty('--device-mobile-scale', (height / 844) * 0.9);
+		document.documentElement.style.setProperty('--device-tablet-scale', (height / 1180) * 0.9);
+		document.documentElement.style.setProperty('--device-desktop-scale', (width / 1920) * 0.9);
+	}
+</script>
+
+<div id="preview-window" bind:this={previewContainer} class={previewMode}>
+	{#if postJsonData}
+		<div id="preview-options">
+			<Tabs.Root value="mobile">
+				<Tabs.List>
+					<Tabs.Trigger value="mobile" on:click={() => (previewMode = 'mobile')}
+						>Mobile</Tabs.Trigger
+					>
+					<Tabs.Trigger value="tablet" on:click={() => (previewMode = 'tablet')}
+						>Tablet</Tabs.Trigger
+					>
+					<Tabs.Trigger value="desktop" on:click={() => (previewMode = 'desktop')}
+						>Desktop</Tabs.Trigger
+					>
+				</Tabs.List>
+			</Tabs.Root>
+		</div>
+
+		<div class={`preview-container ${previewMode}`}>
+			<div id="preview-scroll">
+				<div bind:this={postDom} style="display:none">
+					<XPost
+						postJson={postJsonData}
+						postConfig={postConfigData}
+						actionCallback={finalizeHTML}
+					/>
+				</div>
+
+				{@html postPreviewHTML}
+
+				{#if postPreviewHTML === ''}
+					<p id="no-post">No post to display</p>
+				{/if}
+
+				<div />
+			</div>
+		</div>
+	{/if}
+</div>
+
+<style lang="scss">
+	@import '../../routes/styles.scss';
+
+	#preview-window {
+		z-index: 1;
+		position: relative;
+		container: device-screen / inline-size;
+
+		display: flex;
+		flex-direction: column;
+		align-items: center;
+		justify-content: center;
+		height: 100vh;
+
+		background-color: rgb(245, 245, 245);
+		background-image: radial-gradient(circle at 1px 1px, rgb(209, 210, 215) 1px, transparent 0);
+
+		transition: background-size 0.2s;
+
+		&.mobile {
+			background-size: 32px 32px;
+		}
+		&.tablet {
+			background-size: 24px 24px;
+		}
+		&.desktop {
+			background-size: 16px 16px;
+		}
+
+		#preview-options {
+			position: absolute;
+			// top: 530px;
+			bottom: 50px;
+			// left: 50%;
+			// transform: translate(-50%, 0);
+			z-index: 2;
+		}
+	}
+
+	.list-disc {
+		padding-left: 20px;
+
+		list-style-type: disc;
+	}
+
+	.preview-container {
+		padding: 16px;
+		overflow: hidden;
+		background-color: rgb(255, 255, 255);
+
+		// transform: translate(0, 50px);
+
+		box-sizing: border-box;
+		backface-visibility: hidden;
+		--webkit-font-smoothing: antialiased;
+
+		// Inset line
+
+		box-shadow:
+			3px -3px 4px -2px rgba(33, 73, 104, 0.564) inset,
+			0px 0px 6px 0px rgba(63, 78, 96, 0.55) inset,
+			0px 0px 0px 5px rgb(239, 239, 239) inset,
+			0px 0px 0px 16px rgb(43, 45, 47) inset,
+			0px 40px 50px 12px rgb(63 81 100 / 30%);
+		border-radius: 40px;
+
+		transition:
+			width 0.2s,
+			min-height 0.2s,
+			transform 0.2s;
+
+		&.mobile {
+			width: 390px;
+			min-height: 844px;
+			transform: scale(var(--device-mobile-scale));
+		}
+		&.tablet {
+			width: 820px;
+			min-height: 1180px;
+			transform: scale(var(--device-tablet-scale));
+		}
+		&.desktop {
+			width: 1920px;
+			min-height: 1080px;
+			transform: scale(var(--device-desktop-scale));
+		}
+	}
+
+	#preview-scroll {
+		width: 100%;
+		height: 100%;
+		padding: 20px;
+
+		box-sizing: border-box;
+		border-radius: 30px;
+		display: flex;
+		flex-wrap: wrap;
+		justify-content: center;
+		align-items: center;
+
+		overflow-y: scroll;
+
+		&::-webkit-scrollbar {
+			display: none;
+		}
+
+		> div {
+			height: 200px;
+			width: 100%;
+		}
+	}
+
+	.post-result {
+		z-index: 2;
+		display: flex;
+		gap: 60px;
+		padding: 30px;
+		box-sizing: border-box;
+
+		width: 1000px;
+		border: 1px solid rgb(223, 223, 223);
+		background-color: rgb(255, 255, 255);
+		border-radius: 16px;
+
+		h1 {
+			margin: 0;
+			text-align: left;
+		}
+
+		h2 {
+			margin-bottom: 8px;
+			text-align: left;
+		}
+
+		h3 {
+			margin-bottom: 4px;
+			text-align: left;
+			font-size: 0.9rem;
+		}
+
+		hr {
+			margin: 40px 0;
+			opacity: 0.3;
+		}
+
+		#no-post {
+			width: 100%;
+			margin: 0;
+			text-align: center;
+		}
+
+		#left {
+			flex-basis: 50%;
+			max-width: 50%;
+		}
+		#right {
+			flex-basis: 50%;
+			max-width: 50%;
+		}
+	}
+</style>

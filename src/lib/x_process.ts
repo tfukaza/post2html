@@ -1,4 +1,4 @@
-import { PostData, ProcessedPost } from '../routes/postTypes';
+import { OriginalXData, ProcessedXData } from './x_types';
 
 // getMediaUrl is taken from react-tweet library by Vercel.
 // Link: https://github.com/vercel/react-tweet/blob/main/packages/react-tweet/src/utils.ts
@@ -15,7 +15,12 @@ export const getMediaUrl = (media: any, size: 'small' | 'medium' | 'large'): str
 	return url.toString();
 };
 
-function processPostJson(json: PostData): ProcessedPost {
+/**
+ * Process the JSON data from the X API
+ * @param json
+ * @returns
+ */
+function processXJson(json: OriginalXData): ProcessedXData {
 	const {
 		entities,
 		user,
@@ -61,6 +66,7 @@ function processPostJson(json: PostData): ProcessedPost {
 			(hashtags &&
 				hashtags.map((hashtag) => {
 					return {
+						indices: hashtag.indices,
 						text: hashtag.text
 					};
 				})) ||
@@ -72,42 +78,4 @@ function processPostJson(json: PostData): ProcessedPost {
 		conversation_count
 	};
 }
-
-// function makeAllStylesInline(element: Node) {
-// 	// Get the css styles applied to this element
-// 	const styles: CssStyleDeclaration = window.getComputedStyle(element);
-// 	let cssText = element.style.cssText;
-// 	console.log(styles);
-// 	// Get the css properties
-// 	for (let i = 0; i < styles.length; i++) {
-// 		const property = styles[i];
-// 		const value = styles.getPropertyValue(property);
-// 		cssText += `${property}: ${value};`;
-// 	}
-// 	// Set the cssText to the element
-// 	element.style.cssText = cssText;
-// 	// Recurse through the children
-// 	for (let i = 0; i < element.children.length; i++) {
-// 		makeAllStylesInline(element.children[i]);
-// 	}
-
-// 	return element;
-// }
-
-function removeSvelteClasses(element: Node) {
-	if (element instanceof HTMLElement) {
-		element.classList.forEach((className) => {
-			if (className.startsWith('s-') || className.startsWith('svelte-')) {
-				element.classList.remove(className);
-			}
-		});
-	}
-
-	for (let i = 0; i < element.childNodes.length; i++) {
-		removeSvelteClasses(element.childNodes[i]);
-	}
-
-	return element;
-}
-
-export { processPostJson, removeSvelteClasses };
+export { processXJson };

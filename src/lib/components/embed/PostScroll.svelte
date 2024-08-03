@@ -1,15 +1,15 @@
 <script lang="ts">
-	import type { ProcessedPost } from '../../routes/postTypes';
+	import type { ProcessedXData } from '$lib/x_types';
 	import { afterUpdate } from 'svelte';
 
-	export let postJson: ProcessedPost | null = null;
+	export let postJson: ProcessedXData | null = null;
 	export let actionCallback: () => void;
 
 	afterUpdate(() => {
 		actionCallback();
 	});
 
-	function processText(postJson: ProcessedPost): string {
+	function processText(postJson: ProcessedXData): string {
 		// Replace each display_url with an anchor tag
 		let text = postJson.text;
 		postJson.urls.forEach((url) => {
@@ -85,8 +85,8 @@
 					<p />
 				</div>
 				{#if postJson.media.length > 1}
-					<button id="left" onclick="a(event, -1, {postJson.media.length - 1})" disabled>◀</button>
-					<button id="right" onclick="a(event, 1, {postJson.media.length - 1})">▶</button>
+					<button id="left" onclick="a(event, -1, {postJson.media.length - 1})" disabled>🡐</button>
+					<button id="right" onclick="a(event, 1, {postJson.media.length - 1})">🡒</button>
 				{/if}
 			</div>
 		{/if}
@@ -95,5 +95,5 @@
 {/if}
 
 <style lang="scss" global>
-	@import './post.scss';
+	@import './x_post.scss';
 </style>

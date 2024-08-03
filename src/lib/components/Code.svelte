@@ -43,8 +43,9 @@
 		border-radius: 4px;
 
 		> div {
-			background-color: #f0f0f0;
+			background-color: #393943;
 			overflow-x: scroll;
+			padding: 16px;
 
 			&::-webkit-scrollbar {
 				height: 4px;
@@ -67,8 +68,8 @@
 		right: 5px;
 		z-index: 1000;
 
-		background-color: transparent;
-		border: 1.5px solid rgba(0, 0, 0, 0.139);
+		background-color: #46464d;
+		border: 1.4px solid rgb(117, 118, 125);
 		border-radius: 4px;
 		padding: 4px;
 		cursor: pointer;
@@ -76,7 +77,7 @@
 		transition: background-color 0.2s;
 
 		&:hover {
-			background-color: rgba(92, 92, 92, 0.121);
+			background-color: rgb(93, 95, 101);
 		}
 
 		span {
