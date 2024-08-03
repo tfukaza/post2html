@@ -1,11 +1,11 @@
 <script lang="ts">
 	import PostEditor from '$components/PostEditor.svelte';
+	import PostPreview from '$components/PostPreview.svelte';
 	import { processXJson } from '$lib/x_process';
 	import type { ProcessedXData } from '$lib/x_types';
 
-	import { Input } from "$lib/components/ui/input";
-	import { Button } from "$lib/components/ui/button";
-
+	import { Input } from '$lib/components/ui/input';
+	import { Button } from '$lib/components/ui/button';
 
 	let postURL: string = '';
 	let postJson: ProcessedXData | null = null;
@@ -45,15 +45,17 @@
 
 <svelte:head>
 	<title>post2html</title>
-	<meta name="description" content="Better embeds for Twitter posts" />
+	<meta name="description" content="Better embeds for social media posts" />
 </svelte:head>
 
 <main>
-	<section id="input">
-		<div class="input-link">
-			<h1>Step 1: Paste the X (Twitter) link below</h1>
+	<section id="sidebar">
+		<div id="header">
+			<h1>post2html</h1>
+		</div>
+		<div id="url-section">
 			<form>
-				<Input 
+				<Input
 					type="text"
 					placeholder="Paste the X (Twitter) link here"
 					bind:value={postURL}
@@ -62,61 +64,62 @@
 				<Button class={disableSubmit ? 'disable' : ''} on:click={onSubmit}>Submit</Button>
 			</form>
 		</div>
+		<h3>Step 2: Configure</h3>
+		<hr />
+		<PostEditor {postJson} />
 	</section>
-
-	<PostEditor {postJson} />
+	<section id="preview">
+		<PostPreview {postJson} />
+	</section>
 </main>
 
 <style lang="scss">
 	@import './styles.scss';
 
 	main {
-		display: flex;
-		flex-direction: column;
-		justify-content: center;
-		align-items: center;
-
-		width: 1000px;
-		margin: 0 auto;
+		display: grid;
+		grid-template-columns: 350px 1fr;
+		width: 100vw;
+		height: 100vh;
+		flex-direction: row;
 	}
 
-	section {
-		display: flex;
-		flex-direction: column;
-		justify-content: center;
-		align-items: center;
+	#sidebar {
+		grid-column: 1;
+		height: 100vh;
+		overflow-y: scroll;
+		padding: 20px;
 
-		width: 100%;
-		margin: 20px 0;
+		#header {
+			padding: 10px 0px 20px 0px;
+			h1 {
+				margin-top: 0;
+				font-size: 1.5rem;
+			}
+		}
 
-		// border: 1px solid rgb(172, 172, 172);
-		// background-color: rgb(250, 250, 250);
-		// border-radius: 12px;
+		#url-section {
+			padding: 20px 0px;
+			h1 {
+				margin-top: 0;
+				font-size: 2rem;
+			}
+
+			form {
+				width: 100%;
+				display: flex;
+				gap: 20px;
+			}
+		}
 	}
 
-	#input {
-		height: 300px;
-	}
+	#preview {
+		grid-column: 2;
+		height: 100vh;
+		overflow-y: scroll;
 
-	.input-link {
-		padding: 30px;
-
-		border-radius: 0px;
-
-		h1 {
-			margin-top: 0;
-			font-size: 2rem;
-		}
-		> div {
-			display: flex;
-		}
-
-		form {
-			display: flex;
-			gap: 20px;
-			margin: 0px calc(50% - 200px);
-		}
-
-		
+		background-color: rgb(245, 245, 245);
+		background-image: radial-gradient(circle at 1px 1px, rgb(209, 210, 215) 1px, transparent 0);
+		background-size: 32px 32px;
 	}
 </style>
