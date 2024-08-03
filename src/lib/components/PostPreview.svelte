@@ -54,6 +54,8 @@
 			css += style.innerHTML;
 			style.innerHTML = '';
 		});
+		// Remove comments
+		css = css.replace(/\/\/.*?\n/g, '');
 		css = css.replace(/\/\*.*?\*\//g, '');
 		// ; don't need any spaces after them
 		css = css.replace(/;\s*/g, ';');

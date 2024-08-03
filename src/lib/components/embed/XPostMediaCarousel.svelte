@@ -37,11 +37,15 @@
 	{@html `<style>${postStyle}</style>`}
 	<div class={`media num-media-${postJson.media.length} media-0`}>
 		<div>
-			<p />
-			{#each postJson.media as media, i}
-				<img src={media.media_url} alt={media.display_url} id={`media-${i}`} />
-			{/each}
-			<p />
+			{#if postJson.media.length > 1}
+				<p />
+				{#each postJson.media as media, i}
+					<img src={media.media_url} alt={media.display_url} id={`media-${i}`} />
+				{/each}
+				<p />
+			{:else}
+				<img src={postJson.media[0].media_url} alt={postJson.media[0].display_url} />
+			{/if}
 		</div>
 		{#if postJson.media.length > 1}
 			<button id="left" onclick="a(event, -1, {postJson.media.length - 1})" disabled>🡐</button>
