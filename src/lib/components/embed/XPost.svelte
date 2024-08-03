@@ -22,30 +22,40 @@
 	 */
 	function processText(postJson: ProcessedXData): string {
 		// Replace each display_url with an anchor tag
+
+		if (postJson.text === undefined) {
+			return '';
+		}
 		let text = postJson.text;
-		postJson.urls.forEach((url) => {
-			text = text.replace(url.url, `<a href="${url.expanded_url}">${url.display_url}</a>`);
-		});
+		if (postJson.urls !== undefined) {
+			postJson.urls.forEach((url) => {
+				text = text.replace(url.url, `<a href="${url.expanded_url}">${url.display_url}</a>`);
+			});
+		}
 		// Replace each hashtag with an anchor tag
-		postJson.hashTags.forEach((hashTag) => {
-			text = text.replace(
-				'#' + hashTag.text,
-				`<a href="https://twitter.com/hashtag/${hashTag.text}">#${hashTag.text}</a>`
-			);
-		});
+		if (postJson.hashTags !== undefined) {
+			postJson.hashTags.forEach((hashTag) => {
+				text = text.replace(
+					'#' + hashTag.text,
+					`<a href="https://twitter.com/hashtag/${hashTag.text}">#${hashTag.text}</a>`
+				);
+			});
+		}
 		// Remove any media links from text
-		postJson.media.forEach((media) => {
-			text = text.replace(media.url, '');
-		});
+		if (postJson.media !== undefined) {
+			postJson.media.forEach((media) => {
+				text = text.replace(media.url, '');
+			});
+		}
 
 		return text.replace(/\n/g, '<br />');
 	}
 
-	$: postText = postJson ? processText(postJson) : '';
+	$: postText = postJson != undefined ? processText(postJson) : '';
 
 	$: className =
 		'x-post' +
-		(postJson && postJson.media.length > 0 ? ' has-media' : '') +
+		(postJson && postJson.media && postJson.media.length > 0 ? ' has-media' : '') +
 		(postText && postText.length > 0 ? ' has-text' : '');
 </script>
 

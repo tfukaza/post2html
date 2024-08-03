@@ -10,8 +10,10 @@
 	import * as Tooltip from '$lib/components/ui/tooltip';
 
 	import IconHelp from '~icons/material-symbols/help';
+	import { postConfig, postHTML, postJson } from '$components/store';
+	import { onMount } from 'svelte';
 
-	export let postJson: ProcessedXData | null = null;
+	// export let postJson: ProcessedXData | null = null;
 
 	let postDom: Node | null = null;
 
@@ -21,11 +23,13 @@
 		imageStyle: 'grid'
 	};
 
-	import { postConfig, postHTML } from '$components/store';
-
 	postConfig.subscribe((value) => {
-		console.log(value);
+		// console.log(value);
 		postConfigData = value;
+	});
+	let postJsonData: ProcessedXData | null = null;
+	postJson.subscribe((value) => {
+		postJsonData = value;
 	});
 
 	function finalizeHTML(): void {
@@ -46,7 +50,7 @@
 			.concat(Array.prototype.slice.call(post.querySelectorAll('style')));
 		let css = '';
 		cssDom.forEach((style) => {
-			console.log(style.innerHTML);
+			// console.log(style.innerHTML);
 			css += style.innerHTML;
 			style.innerHTML = '';
 		});
@@ -102,10 +106,36 @@
 	$: mobileActive = previewMode === 'mobile';
 	$: tabletActive = previewMode === 'tablet';
 	$: desktopActive = previewMode === 'desktop';
+
+	let previewContainer: HTMLElement;
+
+	onMount(() => {
+		// if (!previewContainer) return;
+		const resizeObserver = new ResizeObserver((entries) => {
+			for (let entry of entries) {
+				resizePreview(entry.target as HTMLElement);
+			}
+		});
+		resizeObserver.observe(previewContainer);
+		resizePreview(previewContainer);
+	});
+
+	function resizePreview(node: HTMLElement): void {
+		console.debug('Resizing preview');
+		if (!node) return;
+
+		console.log(node.clientWidth, node.clientHeight);
+		let width = node.clientWidth;
+		let height = node.clientHeight;
+
+		document.documentElement.style.setProperty('--device-mobile-scale', (height / 844) * 0.9);
+		document.documentElement.style.setProperty('--device-tablet-scale', (height / 1180) * 0.9);
+		document.documentElement.style.setProperty('--device-desktop-scale', (width / 1920) * 0.9);
+	}
 </script>
 
-{#if postJson}
-	<div id="preview">
+<div id="preview-window" bind:this={previewContainer} class={previewMode}>
+	{#if postJsonData}
 		<div id="preview-options">
 			<Tabs.Root value="mobile">
 				<Tabs.List>
@@ -125,7 +155,11 @@
 		<div class={`preview-container ${previewMode}`}>
 			<div id="preview-scroll">
 				<div bind:this={postDom} style="display:none">
-					<XPost {postJson} postConfig={postConfigData} actionCallback={finalizeHTML} />
+					<XPost
+						postJson={postJsonData}
+						postConfig={postConfigData}
+						actionCallback={finalizeHTML}
+					/>
 				</div>
 
 				{@html postPreviewHTML}
@@ -137,23 +171,42 @@
 				<div />
 			</div>
 		</div>
-	</div>
-{/if}
+	{/if}
+</div>
 
 <style lang="scss">
 	@import '../../routes/styles.scss';
 
-	#preview {
+	#preview-window {
 		z-index: 1;
 		position: relative;
+		container: device-screen / inline-size;
 
 		display: flex;
 		flex-direction: column;
 		align-items: center;
+		justify-content: center;
+		height: 100vh;
+
+		background-color: rgb(245, 245, 245);
+		background-image: radial-gradient(circle at 1px 1px, rgb(209, 210, 215) 1px, transparent 0);
+
+		transition: background-size 0.2s;
+
+		&.mobile {
+			background-size: 32px 32px;
+		}
+		&.tablet {
+			background-size: 24px 24px;
+		}
+		&.desktop {
+			background-size: 16px 16px;
+		}
 
 		#preview-options {
-			// position: absolute;
+			position: absolute;
 			// top: 530px;
+			bottom: 50px;
 			// left: 50%;
 			// transform: translate(-50%, 0);
 			z-index: 2;
@@ -167,13 +220,16 @@
 	}
 
 	.preview-container {
-		height: 600px;
 		padding: 16px;
 		overflow: hidden;
+		background-color: rgb(255, 255, 255);
 
-		transform: translate(0, 50px);
+		// transform: translate(0, 50px);
 
 		box-sizing: border-box;
+		backface-visibility: hidden;
+		--webkit-font-smoothing: antialiased;
+
 		// Inset line
 
 		box-shadow:
@@ -184,16 +240,25 @@
 			0px 40px 50px 12px rgb(63 81 100 / 30%);
 		border-radius: 40px;
 
-		transition: width 0.2s;
+		transition:
+			width 0.2s,
+			min-height 0.2s,
+			transform 0.2s;
 
 		&.mobile {
-			width: 375px;
+			width: 390px;
+			min-height: 844px;
+			transform: scale(var(--device-mobile-scale));
 		}
 		&.tablet {
-			width: 768px;
+			width: 820px;
+			min-height: 1180px;
+			transform: scale(var(--device-tablet-scale));
 		}
 		&.desktop {
-			width: 1000px;
+			width: 1920px;
+			min-height: 1080px;
+			transform: scale(var(--device-desktop-scale));
 		}
 	}
 
