@@ -10,30 +10,31 @@
 
 {#if postJson}
 	<script>
-		let a = (e, c, d) => {
-			let b = e.target.parentElement.dataset.index;
-			b = parseInt(b);
-			b += c;
-			b = b > d ? d : b < 0 ? 0 : b;
-			e.target.parentElement.dataset.index = b;
-			let f = e.target.parentElement;
+		// let a = (e, c, d) => {
+		// 	console.log('Click');
+		// 	e.stopPropagation();
+		// 	let b = e.target.parentElement.dataset.index;
+		// 	b = parseInt(b);
+		// 	b += c;
+		// 	b = b > d ? d : b < 0 ? 0 : b;
+		// 	e.target.parentElement.dataset.index = b;
+		// 	let f = e.target.parentElement;
 
-			f.children[0].scrollLeft =
-				f.children[0].children[b + 1].offsetLeft - f.children[0].children[1].offsetLeft;
-			let l = f.children[1],
-				r = f.children[2];
-			if (b === 0) {
-				l.disabled = true;
-				r.disabled = false;
-			} else if (b === d) {
-				l.disabled = false;
-				r.disabled = true;
-			} else {
-				l.disabled = false;
-				r.disabled = false;
-			}
-			e.preventDefault();
-		};
+		// 	f.children[0].scrollLeft =
+		// 		f.children[0].children[b + 1].offsetLeft - f.children[0].children[1].offsetLeft;
+		// 	let l = f.children[1],
+		// 		r = f.children[2];
+		// 	if (b === 0) {
+		// 		l.disabled = true;
+		// 		r.disabled = false;
+		// 	} else if (b === d) {
+		// 		l.disabled = false;
+		// 		r.disabled = true;
+		// 	} else {
+		// 		l.disabled = false;
+		// 		r.disabled = false;
+		// 	}
+		// };
 	</script>
 
 	{@html `<style>${postStyle}</style>`}
@@ -50,8 +51,22 @@
 			{/if}
 		</div>
 		{#if postJson.media.length > 1}
-			<button id="left" onclick="a(event, -1, {postJson.media.length - 1})" disabled>🡐</button>
-			<button id="right" onclick="a(event, 1, {postJson.media.length - 1})">🡒</button>
+			<button
+				id="left"
+				onclick="(function(e)&lbrace;e.stopPropagation();let b=parseInt(e.target.parentElement.dataset.index);b=b==0?0:b-1;e.target.parentElement.dataset.index=b;let f=e.target.parentElement;f.children[0].scrollLeft=f.children[0].children[b+1].offsetLeft-f.children[0].children[1].offsetLeft;f.children[1].disabled=b==0;f.children[2].disabled=b=={postJson
+					.media.length - 1}&rbrace;)(arguments[0])"
+				disabled
+			>
+				🡐
+			</button>
+
+			<button
+				id="right"
+				onclick="(function(e)&lbrace;e.stopPropagation();let b=parseInt(e.target.parentElement.dataset.index);b=b=={postJson
+					.media.length - 1}?{postJson.media.length -
+					1}:b+1;e.target.parentElement.dataset.index=b;let f=e.target.parentElement;f.children[0].scrollLeft=f.children[0].children[b+1].offsetLeft-f.children[0].children[1].offsetLeft;f.children[1].disabled=b==0;f.children[2].disabled=b=={postJson
+					.media.length - 1}&rbrace;)(arguments[0])">🡒</button
+			>
 		{/if}
 	</div>
 {/if}
