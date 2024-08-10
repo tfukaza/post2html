@@ -97,7 +97,7 @@
 			finalHtml += `<script>${script}<\/script>`;
 		}
 		finalHtml += `<style>${css}<\/style>`;
-		finalHtml += `${html}" style="border: none;"/>`;
+		finalHtml += `${html}" style="border: none;" onload="this.style.height=this.contentDocument.body.scrollHeight+'px';"></iframe>`;
 
 		console.log(finalHtml);
 
