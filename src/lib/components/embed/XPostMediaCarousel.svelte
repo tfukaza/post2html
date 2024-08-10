@@ -9,33 +9,6 @@
 </script>
 
 {#if postJson}
-	<script>
-		// let a = (e, c, d) => {
-		// 	e.stopPropagation();
-		// 	let b = e.target.parentElement.dataset.index;
-		// 	b = parseInt(b);
-		// 	b += c;
-		// 	b = b > d ? d : b < 0 ? 0 : b;
-		// 	e.target.parentElement.dataset.index = b;
-		// 	let f = e.target.parentElement;
-
-		// 	f.children[0].scrollLeft =
-		// 		f.children[0].children[b + 1].offsetLeft - f.children[0].children[1].offsetLeft;
-		// 	let l = f.children[1],
-		// 		r = f.children[2];
-		// 	if (b === 0) {
-		// 		l.disabled = true;
-		// 		r.disabled = false;
-		// 	} else if (b === d) {
-		// 		l.disabled = false;
-		// 		r.disabled = true;
-		// 	} else {
-		// 		l.disabled = false;
-		// 		r.disabled = false;
-		// 	}
-		// };
-	</script>
-
 	{@html `<style>${postStyle}</style>`}
 	<div class={`media num-media-${postJson.media.length} media-0`} data-index="0">
 		<div>

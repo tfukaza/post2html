@@ -88,13 +88,18 @@
 		html = html.replace(/\>[\r\n ]+\</g, '><');
 		html = html.replace(/<!--.*?-->/g, '');
 		html = html.replace(/class=""/g, '');
+		// Replace quote with escaped quote
+		html = html.replace(/"/g, '&quot;');
+		html = html.replace(/'/g, '&apos;');
 
-		let finalHtml = `<div id="embedded-post">`;
+		let finalHtml = `<iframe srcdoc="`;
 		if (script) {
 			finalHtml += `<script>${script}<\/script>`;
 		}
 		finalHtml += `<style>${css}<\/style>`;
-		finalHtml += `${html}<\/div>`;
+		finalHtml += `${html}" style="border: none;"/>`;
+
+		console.log(finalHtml);
 
 		postPreviewHTML = finalHtml;
 		postHTML.set(finalHtml);
