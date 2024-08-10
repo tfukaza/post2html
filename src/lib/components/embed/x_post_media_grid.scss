@@ -57,7 +57,7 @@
 	}
 }
 
-@container (min-width: 500px) {
+@media only screen and (max-width: 500px) {
 	.x-post {
 		max-width: 500px;
 	}
@@ -76,7 +76,7 @@
 	// NOT has-media
 }
 
-@container (min-width: 800px) {
+@media only screen and (min-width: 800px) {
 	.has-media.has-text {
 		max-width: 900px;
 		display: grid;

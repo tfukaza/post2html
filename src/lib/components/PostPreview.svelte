@@ -97,7 +97,7 @@
 			finalHtml += `<script>${script}<\/script>`;
 		}
 		finalHtml += `<style>${css}<\/style>`;
-		finalHtml += `${html}" style="border: none;" onload="this.style.height=this.contentDocument.body.scrollHeight+'px';"></iframe>`;
+		finalHtml += `${html}" style="border: none; width:100%; overflow:hidden" scrolling="no" onload="let a=()=>{console.log('resize');this.style.height=this.contentDocument.body.scrollHeight+'px'}; a(); new ResizeObserver(a).observe(this)"></iframe>`;
 
 		console.log(finalHtml);
 

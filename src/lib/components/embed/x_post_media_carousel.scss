@@ -1,6 +1,9 @@
 .x-post {
 	.media {
 		display: grid;
+	}
+	.media {
+		display: grid;
 		grid-template-columns: 1fr;
 		grid-template-rows: 1fr;
 		align-items: center;
@@ -99,8 +102,9 @@
 	}
 }
 
-@container (min-width: 800px) {
+@media only screen and (min-width: 800px) {
 	.has-media.has-text {
+		max-width: 900px;
 		.main {
 			padding: 20px;
 			box-sizing: border-box;
