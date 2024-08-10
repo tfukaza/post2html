@@ -20,7 +20,7 @@
 	let postPreviewHTML: string = '';
 
 	let postConfigData = {
-		imageStyle: 'grid'
+		imageStyle: 'Grid'
 	};
 
 	postConfig.subscribe((value) => {
@@ -36,11 +36,11 @@
 		if (!postDom) return;
 
 		let dom: HTMLElement = postDom.cloneNode(true) as HTMLElement;
-		let post = dom.querySelector('div');
+		let post = dom.querySelector('a');
 		if (!post) return;
 
 		// Minify the html
-		let tmpDom = document.createElement('div');
+		let tmpDom = document.createElement('a');
 		tmpDom.appendChild(post);
 		removeSvelteClasses(tmpDom);
 
@@ -102,7 +102,7 @@
 		postHTML.set(finalHtml);
 	}
 
-	let imageStyle: string = 'grid';
+	// let imageStyle: string = 'grid';
 	let previewMode: string = 'mobile';
 
 	$: mobileActive = previewMode === 'mobile';
@@ -123,16 +123,17 @@
 	});
 
 	function resizePreview(node: HTMLElement): void {
-		console.debug('Resizing preview');
 		if (!node) return;
 
-		console.log(node.clientWidth, node.clientHeight);
 		let width = node.clientWidth;
 		let height = node.clientHeight;
 
-		document.documentElement.style.setProperty('--device-mobile-scale', (height / 844) * 0.9);
-		document.documentElement.style.setProperty('--device-tablet-scale', (height / 1180) * 0.9);
-		document.documentElement.style.setProperty('--device-desktop-scale', (width / 1920) * 0.9);
+		document.documentElement.style.setProperty(
+			'--device-mobile-scale',
+			Math.min((height / 844) * 0.8, 1)
+		);
+		document.documentElement.style.setProperty('--device-tablet-scale', (height / 1180) * 0.8);
+		document.documentElement.style.setProperty('--device-desktop-scale', (width / 1920) * 0.8);
 	}
 </script>
 
@@ -155,6 +156,7 @@
 		</div>
 
 		<div class={`preview-container ${previewMode}`}>
+			<div id="phone-island"></div>
 			<div id="preview-scroll">
 				<div bind:this={postDom} style="display:none">
 					<XPost
@@ -242,25 +244,66 @@
 			0px 40px 50px 12px rgb(63 81 100 / 30%);
 		border-radius: 40px;
 
-		transition:
-			width 0.2s,
-			min-height 0.2s,
-			transform 0.2s;
+		transition: all 0.4s ease;
+
+		#phone-island {
+			position: absolute;
+			top: 30px;
+			left: 50%;
+			transform: translate(-50%, 0);
+			width: 90px;
+			height: 24px;
+			border-radius: 12px;
+			background-color: rgb(53, 53, 58);
+			z-index: 5;
+			opacity: 1;
+
+			transition: all 0.4s ease;
+		}
 
 		&.mobile {
 			width: 390px;
-			min-height: 844px;
+			height: 844px;
 			transform: scale(var(--device-mobile-scale));
+
+			#phone-island {
+				opacity: 1;
+			}
 		}
 		&.tablet {
+			box-shadow:
+				3px -3px 4px -2px rgba(33, 73, 104, 0.564) inset,
+				0px 0px 6px 0px rgba(63, 78, 96, 0.55) inset,
+				0px 0px 0px 5px rgb(239, 239, 239) inset,
+				0px 0px 0px 24px rgb(43, 45, 47) inset,
+				0px 40px 50px 12px rgb(63 81 100 / 30%);
+			padding: 24px;
 			width: 820px;
-			min-height: 1180px;
+			height: 1180px;
 			transform: scale(var(--device-tablet-scale));
+
+			#phone-island {
+				top: 0px;
+				height: 0px;
+				opacity: 0;
+			}
 		}
 		&.desktop {
+			border-radius: 14px;
+			box-shadow:
+				3px -3px 4px -2px rgba(33, 73, 104, 0.564) inset,
+				0px 0px 6px 0px rgba(63, 78, 96, 0.55) inset,
+				0px 0px 0px 5px rgb(239, 239, 239) inset,
+				0px 0 0px 32px rgb(72, 75, 79) inset,
+				0px 40px 50px 12px rgb(63 81 100 / 30%);
+			padding: 32px;
 			width: 1920px;
-			min-height: 1080px;
+			height: 1080px;
 			transform: scale(var(--device-desktop-scale));
+
+			#phone-island {
+				opacity: 0;
+			}
 		}
 	}
 

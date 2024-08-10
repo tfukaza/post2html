@@ -61,7 +61,7 @@
 
 {#if postJson}
 	{@html `<style>${postStyle}</style>`}
-	<div class={className}>
+	<a class={className} href={postJson.postUrl} target="_blank">
 		<div class="main">
 			<div class="profile">
 				<img src={postJson.user.profile_image_url_https} alt={postJson.user.name} />
@@ -82,7 +82,7 @@
 				<XPostMediaCarousel {postJson} />
 			{/if}
 		{/if}
-	</div>
+	</a>
 {/if}
 
 <style lang="scss" global>

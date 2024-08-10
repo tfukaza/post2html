@@ -1,14 +1,12 @@
 <script lang="ts">
 	import type { ProcessedXData } from '$lib/x_types';
-	import { postConfig, postJson } from '$components/store';
-	import Code from '$components/Code.svelte';
 	import { processXJson } from '$lib/x_process';
+	import { postConfig, postJson, postHTML } from '$components/store';
 
 	import * as Select from '$lib/components/ui/select';
 	import * as Tooltip from '$lib/components/ui/tooltip';
-
 	import IconHelp from '~icons/material-symbols/help';
-
+	import Code from '$components/Code.svelte';
 	import { Input } from '$lib/components/ui/input';
 	import { Button } from '$lib/components/ui/button';
 
@@ -53,7 +51,6 @@
 	}
 
 	let postFinalHTML = '';
-	import { postHTML } from '$components/store';
 	postHTML.subscribe((value) => {
 		postFinalHTML = value;
 	});
@@ -86,19 +83,37 @@
 				<Tooltip.Root>
 					<Tooltip.Trigger class="inline"><IconHelp /></Tooltip.Trigger>
 					<Tooltip.Content>
-						<div class="information">
+						<div class="information flex flex-col gap-4 p-4">
 							<p class="mb-2">Choose the style of the images in the post</p>
-							<div class="flex flex-col items-center gap-1">
-								<div class="flex items-center gap-1">
-									<div class="grid grid-cols-2 grid-rows-2 gap-1">
-										<div class="h-[32px] w-[32px] rounded-md bg-gray-300"></div>
-										<div class="h-[32px] w-[32px] rounded-md bg-gray-300"></div>
-										<div class="h-[32px] w-[32px] rounded-md bg-gray-300"></div>
-										<div class="h-[32px] w-[32px] rounded-md bg-gray-300"></div>
+							<div class="flex flex-row justify-center gap-8">
+								<div class="flex flex-col items-center gap-1" id="image-style-tip-grid">
+									<div>
+										<div></div>
+										<div></div>
+										<div></div>
+										<div></div>
 									</div>
+									<p class="text-slate-400">Grid</p>
 								</div>
-								<p>Grid</p>
+								<div class="flex flex-col items-center gap-1" id="image-style-tip-caraousel">
+									<div>
+										<div></div>
+										<div></div>
+										<div></div>
+									</div>
+									<p class="text-slate-400">Carousel</p>
+								</div>
 							</div>
+							<hr />
+							<p>
+								<b>Grid</b> layouts closely resemble how images are displayed on X(Twitter). The images
+								may become small and hard to see, especially if there are two or more images, although
+								it has the advantage of keeping the code size small.
+							</p>
+							<p>
+								<b>Carousel</b> layouts allow images to be displayed in a larger size, but the code size
+								of the embedding is larger compared to the grid layout.
+							</p>
 						</div>
 					</Tooltip.Content>
 				</Tooltip.Root>
@@ -106,8 +121,8 @@
 
 			<Select.Root
 				selected={{
-					value: postConfig.imageStyle,
-					label: postConfig.imageStyle === 'grid' ? 'Grid' : 'Carousel'
+					value: postConfig.imageStyle ? postConfig.imageStyle : 'grid',
+					label: postConfig.imageStyle ? postConfig.imageStyle : 'Grid'
 				}}
 				onSelectedChange={(e) =>
 					postConfig.update((config) => ({ ...config, imageStyle: e.value }))}
@@ -116,7 +131,7 @@
 					<Select.Value placeholder="Select..." />
 				</Select.Trigger>
 				<Select.Content>
-					<Select.Item value="grid">Grid (default)</Select.Item>
+					<Select.Item value="grid">Grid</Select.Item>
 					<Select.Item value="carousel">Carousel</Select.Item>
 				</Select.Content>
 			</Select.Root>
@@ -148,9 +163,60 @@
 	}
 
 	.information {
+		min-width: 200px;
+		max-width: 300px;
+		z-index: 20;
 		ul {
 			padding-left: 20px;
 			list-style-type: disc;
+		}
+	}
+
+	#image-style-tip-caraousel {
+		// keyframes to slide the mock images in the carousel horizontally
+		@keyframes slide {
+			0%,
+			30% {
+				transform: translateX(0);
+			}
+			70%,
+			100% {
+				transform: translateX(-52px);
+			}
+		}
+
+		> div {
+			width: 64px;
+			height: 68px;
+			overflow: hidden;
+			display: flex;
+			flex-direction: row;
+			gap: 4px;
+
+			> div {
+				flex-shrink: 0;
+				width: 48px;
+				height: 68px;
+				border-radius: 4px;
+				background-color: #d1d5db;
+				animation: slide 1s infinite ease-in-out;
+			}
+		}
+	}
+
+	#image-style-tip-grid {
+		> div {
+			width: 68px;
+			height: 68px;
+			display: grid;
+			grid-template-columns: repeat(2, 1fr);
+			grid-template-rows: repeat(2, 1fr);
+			gap: 4px;
+
+			> div {
+				border-radius: 4px;
+				background-color: #d1d5db;
+			}
 		}
 	}
 
