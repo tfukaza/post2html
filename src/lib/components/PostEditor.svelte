@@ -21,7 +21,6 @@
 	function checkUrlValidity(url: string): boolean {
 		// A valid url contains 19 digits of numbers
 		const regex = /\d{19}/;
-		console.log(regex.test(url));
 		return regex.test(url);
 	}
 

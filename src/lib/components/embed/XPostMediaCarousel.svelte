@@ -11,7 +11,6 @@
 {#if postJson}
 	<script>
 		// let a = (e, c, d) => {
-		// 	console.log('Click');
 		// 	e.stopPropagation();
 		// 	let b = e.target.parentElement.dataset.index;
 		// 	b = parseInt(b);
