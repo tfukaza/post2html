@@ -66,7 +66,7 @@
 		position: absolute;
 		top: 5px;
 		right: 5px;
-		z-index: 1000;
+		z-index: 10;
 
 		background-color: #46464d;
 		border: 1.4px solid rgb(117, 118, 125);

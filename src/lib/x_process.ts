@@ -35,6 +35,7 @@ function processXJson(json: OriginalXData): ProcessedXData {
 	const { urls, hashtags } = entities;
 
 	return {
+		postUrl: `https://twitter.com/${screen_name}/status/${id_str}`,
 		user: {
 			name,
 			screen_name,

@@ -10,10 +10,12 @@
 
 {#if postJson}
 	<script>
-		let b = 0;
 		let a = (e, c, d) => {
+			let b = e.target.parentElement.dataset.index;
+			b = parseInt(b);
 			b += c;
 			b = b > d ? d : b < 0 ? 0 : b;
+			e.target.parentElement.dataset.index = b;
 			let f = e.target.parentElement;
 
 			f.children[0].scrollLeft =
@@ -35,7 +37,7 @@
 	</script>
 
 	{@html `<style>${postStyle}</style>`}
-	<div class={`media num-media-${postJson.media.length} media-0`}>
+	<div class={`media num-media-${postJson.media.length} media-0`} data-index="0">
 		<div>
 			{#if postJson.media.length > 1}
 				<p />

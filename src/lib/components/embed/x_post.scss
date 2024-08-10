@@ -3,10 +3,10 @@
 	container-type: inline-size;
 }
 .x-post {
+	display: block;
 	border: 1px solid #ccc;
 	background-color: #ffffff;
 	border-radius: 8px;
-	padding: 20px;
 	margin: 0px;
 	box-sizing: border-box;
 	margin: 0px auto 0px auto;
@@ -18,6 +18,8 @@
 		grid-template-columns: 50px 1fr;
 		grid-template-rows: 1fr 1fr;
 		column-gap: 8px;
+		margin: 20px;
+		margin-bottom: 10px;
 
 		img {
 			border-radius: 50%;
@@ -52,6 +54,7 @@
 
 	.post {
 		word-wrap: break-word;
+		margin: 20px;
 
 		a {
 			color: #099ef5;

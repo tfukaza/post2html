@@ -11,6 +11,9 @@
 		// 	width: calc(100% - 40px);
 		// }
 		&.num-media-1 > div {
+			p:first-child {
+				display: none;
+			}
 			img {
 				width: 100%;
 				max-width: 100%;
@@ -30,7 +33,7 @@
 			overflow-y: hidden;
 			display: flex;
 			align-items: center;
-			gap: 20px;
+			gap: 21px;
 			scroll-snap-type: x mandatory;
 
 			&::-webkit-scrollbar {
@@ -48,9 +51,6 @@
 
 				transition: transform 0.1s;
 			}
-			img:not(:first-child) {
-				scroll-margin-left: 30px;
-			}
 		}
 
 		> button {
@@ -67,7 +67,7 @@
 			height: 30px;
 			color: white;
 			text-align: center;
-			font-size: 10px;
+			font-size: 20px;
 			transform: scale(1);
 			transform-origin: center;
 
@@ -106,7 +106,7 @@
 			display: grid;
 			grid-template-columns: 1fr;
 			grid-template-rows: 1fr auto auto 1fr;
-			padding: 40px;
+			padding: 20px;
 			margin-right: 20px;
 
 			.profile {

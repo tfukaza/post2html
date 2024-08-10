@@ -54,6 +54,7 @@ export interface OriginalXData {
 }
 
 export interface ProcessedXData {
+	postUrl: string; // Post URL
 	user: {
 		name: string; // User name
 		screen_name: string; // User screen name

@@ -9,6 +9,7 @@
 		align-items: center;
 
 		overflow: hidden;
+		margin: 20px;
 
 		img {
 			object-fit: cover;
@@ -97,10 +98,8 @@
 		}
 
 		.media {
-			margin-top: 0;
 			grid-column: 2 / 3;
 			grid-row: 1 / 5;
-			height: auto;
 		}
 	}
 }
