@@ -36,13 +36,15 @@
 		if (!postDom) return;
 
 		let dom: HTMLElement = postDom.cloneNode(true) as HTMLElement;
-		let post = dom.querySelector('a');
+		let post = dom.querySelector('div');
+		console.log(post);
 		if (!post) return;
 
 		// Minify the html
-		let tmpDom = document.createElement('a');
+		let tmpDom = document.createElement('div');
 		tmpDom.appendChild(post);
 		removeSvelteClasses(tmpDom);
+		console.log(tmpDom);
 
 		// Minify Css
 		let cssDom = Array.prototype.slice
@@ -97,6 +99,8 @@
 		}
 		finalHtml += `<style>${css}<\/style>`;
 		finalHtml += `${html}<\/div>`;
+
+		console.log(finalHtml);
 
 		postPreviewHTML = finalHtml;
 		postHTML.set(finalHtml);

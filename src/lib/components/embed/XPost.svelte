@@ -61,7 +61,10 @@
 
 {#if postJson}
 	{@html `<style>${postStyle}</style>`}
-	<a class={className} href={postJson.postUrl} target="_blank">
+	<div
+		class={className}
+		onclick="console.log('hi'); window.open('{postJson.postUrl}', '_blank').focus()"
+	>
 		<div class="main">
 			<div class="profile">
 				<img src={postJson.user.profile_image_url_https} alt={postJson.user.name} />
@@ -69,9 +72,9 @@
 				<div class="screen-name">@{postJson.user.screen_name}</div>
 			</div>
 
-			<p class="post">
+			<div class="post">
 				{@html postText}
-			</p>
+			</div>
 		</div>
 		{#if postJson.media.length > 0}
 			{#if postConfig && postConfig.imageStyle === 'carousel'}
@@ -82,7 +85,7 @@
 				<XPostMediaCarousel {postJson} />
 			{/if}
 		{/if}
-	</a>
+	</div>
 {/if}
 
 <style lang="scss" global>

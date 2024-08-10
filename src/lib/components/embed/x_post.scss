@@ -13,6 +13,13 @@
 	font-family: sans-serif;
 	max-width: 500px;
 
+	cursor: pointer;
+
+	&:hover {
+		background-color: #f9f9f9;
+		transition: background-color 0.2s;
+	}
+
 	.profile {
 		display: grid;
 		grid-template-columns: 50px 1fr;
