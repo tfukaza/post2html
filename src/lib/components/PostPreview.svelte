@@ -24,7 +24,6 @@
 	};
 
 	postConfig.subscribe((value) => {
-		// console.log(value);
 		postConfigData = value;
 	});
 	let postJsonData: ProcessedXData | null = null;
@@ -37,14 +36,12 @@
 
 		let dom: HTMLElement = postDom.cloneNode(true) as HTMLElement;
 		let post = dom.querySelector('div');
-		console.log(post);
 		if (!post) return;
 
 		// Minify the html
 		let tmpDom = document.createElement('div');
 		tmpDom.appendChild(post);
 		removeSvelteClasses(tmpDom);
-		console.log(tmpDom);
 
 		// Minify Css
 		let cssDom = Array.prototype.slice
@@ -52,7 +49,6 @@
 			.concat(Array.prototype.slice.call(post.querySelectorAll('style')));
 		let css = '';
 		cssDom.forEach((style) => {
-			// console.log(style.innerHTML);
 			css += style.innerHTML;
 			style.innerHTML = '';
 		});
@@ -99,8 +95,6 @@
 		}
 		finalHtml += `<style>${css}<\/style>`;
 		finalHtml += `${html}<\/div>`;
-
-		console.log(finalHtml);
 
 		postPreviewHTML = finalHtml;
 		postHTML.set(finalHtml);

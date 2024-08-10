@@ -29,7 +29,10 @@
 		let text = postJson.text;
 		if (postJson.urls !== undefined) {
 			postJson.urls.forEach((url) => {
-				text = text.replace(url.url, `<a href="${url.expanded_url}">${url.display_url}</a>`);
+				text = text.replace(
+					url.url,
+					`<a href="${url.expanded_url}" target="_blank">${url.display_url}</a>`
+				);
 			});
 		}
 		// Replace each hashtag with an anchor tag
@@ -37,7 +40,7 @@
 			postJson.hashTags.forEach((hashTag) => {
 				text = text.replace(
 					'#' + hashTag.text,
-					`<a href="https://twitter.com/hashtag/${hashTag.text}">#${hashTag.text}</a>`
+					`<a href="https://twitter.com/hashtag/${hashTag.text}" target="_blank">#${hashTag.text}</a>`
 				);
 			});
 		}
@@ -63,7 +66,7 @@
 	{@html `<style>${postStyle}</style>`}
 	<div
 		class={className}
-		onclick="console.log('hi'); window.open('{postJson.postUrl}', '_blank').focus()"
+		onclick="(function(e)&lbrace;if(e.target.tagName!=='A')window.open('{postJson.postUrl}', '_blank').focus();&rbrace;)(arguments[0])"
 	>
 		<div class="main">
 			<div class="profile">

@@ -1,7 +1,5 @@
 .x-post {
 	.media {
-		margin-top: 16px;
-		margin-bottom: 16px;
 		display: grid;
 		grid-template-columns: 1fr;
 		grid-template-rows: 1fr;
@@ -10,46 +8,52 @@
 		// &.num-media-1 > div > img {
 		// 	width: calc(100% - 40px);
 		// }
-		&.num-media-1 > div {
-			p:first-child {
-				display: none;
-			}
-			img {
-				width: 100%;
-				max-width: 100%;
-				height: auto;
-				border-radius: 8px;
+		// p:first-child {
+		// 	// display: none;
+		// }
+		&.num-media-1 {
+			margin: 0px 20px 20px 20px;
+			> div {
+				img {
+					width: 100%;
+					max-width: 100%;
+					height: auto;
+					border-radius: 8px;
+				}
 			}
 		}
-		&:not(.num-media-1) > div {
-			z-index: 1;
-			grid-column: 1 / 2;
-			grid-row: 1 / 2;
-			position: relative;
+		&:not(.num-media-1) {
+			margin: 0px 0px 20px 0px;
+			> div {
+				z-index: 1;
+				grid-column: 1 / 2;
+				grid-row: 1 / 2;
+				position: relative;
 
-			scroll-behavior: smooth;
+				scroll-behavior: smooth;
 
-			overflow-x: scroll;
-			overflow-y: hidden;
-			display: flex;
-			align-items: center;
-			gap: 21px;
-			scroll-snap-type: x mandatory;
+				overflow-x: scroll;
+				overflow-y: hidden;
+				display: flex;
+				align-items: center;
+				gap: 21px;
+				scroll-snap-type: x mandatory;
 
-			&::-webkit-scrollbar {
-				display: none;
-			}
+				&::-webkit-scrollbar {
+					display: none;
+				}
 
-			img {
-				width: 80%;
+				img {
+					width: 80%;
 
-				height: fit-content;
+					height: fit-content;
 
-				border-radius: 8px;
-				scroll-snap-align: start;
-				scroll-margin-left: 20px;
+					border-radius: 8px;
+					scroll-snap-align: start;
+					scroll-margin-left: 20px;
 
-				transition: transform 0.1s;
+					transition: transform 0.1s;
+				}
 			}
 		}
 
@@ -97,17 +101,18 @@
 
 @container (min-width: 800px) {
 	.has-media.has-text {
-		padding: 0px;
 		.main {
+			padding: 20px;
+			box-sizing: border-box;
 			background-image: linear-gradient(90deg, rgb(255, 255, 255) 90%, rgba(255, 255, 255, 0) 100%);
 			z-index: 10;
-			grid-row: 1 / 5 !important;
+			grid-row: 1 / 5;
 
 			display: grid;
 			grid-template-columns: 1fr;
 			grid-template-rows: 1fr auto auto 1fr;
-			padding: 20px;
-			margin-right: 20px;
+
+			// margin-right: 20px;
 
 			.profile {
 				grid-row: 2 / 3;
@@ -119,6 +124,9 @@
 		}
 
 		.media {
+			// p:first-child {
+			// 	display: block;
+			// }
 			&.num-media-1 {
 				margin: 20px;
 				grid-column: 2 / 3;
@@ -138,11 +146,11 @@
 				> div {
 					p:first-child {
 						flex-shrink: 0;
-						width: 400px;
+						width: 420px;
 					}
 					img {
 						width: 300px;
-						scroll-margin-left: 440px;
+						scroll-margin-left: 460px;
 					}
 				}
 
