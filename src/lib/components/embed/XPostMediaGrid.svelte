@@ -1,26 +1,18 @@
 <script lang="ts">
-	import type { ProcessedXData } from '$lib/x_types';
+	import type { ProcessedXData, XPostConfig } from '$lib/x_types';
 
 	import XPostMediaStyles from '$components/embed/x_post_media_grid.scss?inline';
 	import XPostMediaFullImg from '$components/embed/x_post_media_full_img.scss?inline';
 	import XPostMediaFull from './XPostMediaFull.svelte';
 
-	import { postConfig } from '$components/store';
-
 	export let postJsonData: ProcessedXData | null = null;
+	export let postConfigData: XPostConfig | null = null;
 
-	let postConfigData = {
-		imageStyle: 'grid',
-		imageFull: false
-	};
-	postConfig.subscribe((value) => {
-		postConfigData = value;
-	});
-
-	let postStyle: string = XPostMediaStyles + (postConfigData.imageFull ? XPostMediaFullImg : '');
+	let postStyle: string =
+		XPostMediaStyles + (postConfigData && postConfigData.imageFull ? XPostMediaFullImg : '');
 </script>
 
-{#if postJsonData}
+{#if postJsonData && postConfigData}
 	{@html `<style>${postStyle}</style>`}
 	{#if postConfigData.imageFull}
 		<XPostMediaFull {postJsonData} />

@@ -9,6 +9,7 @@
 	import Code from '$components/Code.svelte';
 	import { Input } from '$lib/components/ui/input';
 	import { Button } from '$lib/components/ui/button';
+	import { Switch } from '$lib/components/ui/switch/index.js';
 
 	let postJsonData: ProcessedXData | null = null;
 	postJson.subscribe((value) => {
@@ -134,6 +135,54 @@
 				</Select.Content>
 			</Select.Root>
 		</div>
+		<div class="config-item">
+			<div class="flex items-center gap-1">
+				<h3>Show full size image</h3>
+				<Tooltip.Root>
+					<Tooltip.Trigger class="inline"><IconHelp /></Tooltip.Trigger>
+					<Tooltip.Content>
+						<div class="information flex flex-col gap-4 p-4">
+							<p class="mb-2">Choose the style of the images in the post</p>
+							<div class="flex flex-row justify-center gap-8">
+								<div class="flex flex-col items-center gap-1" id="image-style-tip-grid">
+									<div>
+										<div></div>
+										<div></div>
+										<div></div>
+										<div></div>
+									</div>
+									<p class="text-slate-400">Grid</p>
+								</div>
+								<div class="flex flex-col items-center gap-1" id="image-style-tip-caraousel">
+									<div>
+										<div></div>
+										<div></div>
+										<div></div>
+									</div>
+									<p class="text-slate-400">Carousel</p>
+								</div>
+							</div>
+							<hr />
+							<p>
+								<b>Grid</b> layouts closely resemble how images are displayed on X(Twitter). The images
+								may become small and hard to see, especially if there are two or more images, although
+								it has the advantage of keeping the code size small.
+							</p>
+							<p>
+								<b>Carousel</b> layouts allow images to be displayed in a larger size, but the code size
+								of the embedding is larger compared to the grid layout.
+							</p>
+						</div>
+					</Tooltip.Content>
+				</Tooltip.Root>
+			</div>
+
+			<Switch
+				id="image-full"
+				onCheckedChange={(field) =>
+					postConfig.update((config) => ({ ...config, imageFull: field }))}
+			/>
+		</div>
 	</div>
 	<div class="divided">
 		<h3>3. Copy the Code</h3>
@@ -248,6 +297,7 @@
 		flex-direction: row;
 		gap: 20px;
 		align-items: center;
+		margin-bottom: 16px;
 
 		&:first-child {
 			width: max-content;

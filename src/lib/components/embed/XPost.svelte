@@ -92,9 +92,9 @@
 		</div>
 		{#if postJsonData.media.length > 0}
 			{#if postConfigData && postConfigData.imageStyle === 'carousel'}
-				<XPostMediaCarousel {postJsonData} />
+				<XPostMediaCarousel {postJsonData} {postConfigData} />
 			{:else if postConfigData && postConfigData.imageStyle === 'grid'}
-				<XPostMediaGrid {postJsonData} />
+				<XPostMediaGrid {postJsonData} {postConfigData} />
 			{:else}
 				<p>Invalid image style</p>
 			{/if}

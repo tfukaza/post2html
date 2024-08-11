@@ -4,6 +4,6 @@ import type { XPostConfig } from '$lib/x_types';
 export const postJson = writable(null);
 export const postConfig = writable({
 	imageStyle: 'grid',
-	imageFull: true
+	imageFull: false
 } as XPostConfig);
 export const postHTML = writable('');
