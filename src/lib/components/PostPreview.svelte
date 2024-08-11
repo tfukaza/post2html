@@ -13,15 +13,11 @@
 	import { postConfig, postHTML, postJson } from '$components/store';
 	import { onMount } from 'svelte';
 
-	// export let postJson: ProcessedXData | null = null;
-
 	let postDom: Node | null = null;
 
 	let postPreviewHTML: string = '';
 
-	let postConfigData = {
-		imageStyle: 'Grid'
-	};
+	let postConfigData = {};
 
 	postConfig.subscribe((value) => {
 		postConfigData = value;
@@ -38,7 +34,6 @@
 		let post = dom.querySelector('div');
 		if (!post) return;
 
-		// Minify the html
 		let tmpDom = document.createElement('div');
 		tmpDom.appendChild(post);
 		removeSvelteClasses(tmpDom);
@@ -61,40 +56,46 @@
 		css = css.replace(/\s*\{\s*/g, '{');
 		css = css.replace(/\s*\}\s*/g, '}');
 
-		// Minify Js
-		let scriptDom = post.querySelector('script');
+		let scriptDom = Array.prototype.slice
+			.call(dom.querySelectorAll('script'))
+			.concat(Array.prototype.slice.call(post.querySelectorAll('script')));
 		let script = '';
-		if (scriptDom) {
-			script = scriptDom.innerHTML;
-			script = script.replace(/\n/g, ''); // Remove new lines
-			script = script.replace(/\/\/.*?\n/g, ''); // Remove single line comments
-			script = script.replace(/\/\*.*?\*\//g, ''); // Remove multi line comments
-			script = script.replace(/\s+/g, ' '); // Remove extra spaces
-			// Consecutive let and const declarations can be combined using commas
-			script = script.replace(/let (.*?); let (.*?);/g, 'let $1, $2;');
-			//unary operators (like +) don't need spaces between them and their operands
-			script = script.replace(/\s*([\+\-\*\/\=\%\&\|\!\?\:\,<>])\s*/g, '$1');
-			// ; Don't need any spaces after them
-			script = script.replace(/;\s*/g, ';');
-			// Remove spaces before and after brackets
-			script = script.replace(/\s*\(\s*/g, '(');
-			script = script.replace(/\s*\)\s*/g, ')');
-			script = script.replace(/\s*\{\s*/g, '{');
-			script = script.replace(/\s*\}\s*/g, '}');
-			scriptDom.innerHTML = '';
-		}
+		scriptDom.forEach((code) => {
+			script += code.innerHTML;
+			code.innerHTML = '';
+		});
+		// Minify Js
+
+		script = script.replace(/\n/g, ''); // Remove new lines
+		script = script.replace(/\/\/.*?\n/g, ''); // Remove single line comments
+		script = script.replace(/\/\*.*?\*\//g, ''); // Remove multi line comments
+		script = script.replace(/\s+/g, ' '); // Remove extra spaces
+		// Consecutive let and const declarations can be combined using commas
+		script = script.replace(/let (.*?); let (.*?);/g, 'let $1, $2;');
+		//unary operators (like +) don't need spaces between them and their operands
+		script = script.replace(/\s*([\+\-\*\/\=\%\&\|\!\?\:\,<>])\s*/g, '$1');
+		// ; Don't need any spaces after them
+		script = script.replace(/;\s*/g, ';');
+		// Remove spaces before and after brackets
+		script = script.replace(/\s*\(\s*/g, '(');
+		script = script.replace(/\s*\)\s*/g, ')');
+		script = script.replace(/\s*\{\s*/g, '{');
+		script = script.replace(/\s*\}\s*/g, '}');
 
 		let html: string = tmpDom.innerHTML;
 		html = html.replace(/\>[\r\n ]+\</g, '><');
 		html = html.replace(/<!--.*?-->/g, '');
 		html = html.replace(/class=""/g, '');
+		//Remove any empty style or script tags
+		html = html.replace(/<style><\/style>/g, '');
+		html = html.replace(/<script><\/script>/g, '');
 		// Replace quote with escaped quote
 		html = html.replace(/"/g, '&quot;');
 		html = html.replace(/'/g, '&apos;');
 
 		let finalHtml = `<iframe srcdoc="`;
 		if (script) {
-			finalHtml += `<script>${script}<\/script>`;
+			finalHtml += `<script defer>${script}<\/script>`;
 		}
 		finalHtml += `<style>${css}<\/style>`;
 		finalHtml += `${html}" style="border: none; width:100%; overflow:hidden" scrolling="no" onload="let a=()=>{console.log('resize');this.style.height=this.contentDocument.body.scrollHeight+'px'}; a(); new ResizeObserver(a).observe(this)"></iframe>`;
@@ -162,11 +163,7 @@
 			<div id="phone-island"></div>
 			<div id="preview-scroll">
 				<div bind:this={postDom} style="display:none">
-					<XPost
-						postJson={postJsonData}
-						postConfig={postConfigData}
-						actionCallback={finalizeHTML}
-					/>
+					<XPost actionCallback={finalizeHTML} />
 				</div>
 
 				{@html postPreviewHTML}

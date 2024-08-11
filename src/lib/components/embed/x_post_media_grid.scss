@@ -14,12 +14,6 @@
 			object-fit: cover;
 		}
 
-		// &.num-media-1,
-		// &.num-media-2 {
-		// 	img {
-		// 		// height: 100cqh;
-		// 	}
-		// }
 		&.num-media-1 {
 			grid-template-columns: 1fr;
 			img {
@@ -61,19 +55,6 @@
 	.x-post {
 		max-width: 500px;
 	}
-
-	// .has-media {
-	// 	.media {
-	// 		&.num-media-3,
-	// 		&.num-media-4 {
-	// 			img {
-	// 				height: 150px;
-	// 			}
-	// 		}
-	// 	}
-	// }
-
-	// NOT has-media
 }
 
 @media only screen and (min-width: 800px) {
@@ -90,11 +71,15 @@
 		}
 
 		.media {
-			margin: 0;
+			margin: 10px 0;
 			height: auto;
-			width: calc(100% - 40px);
+			width: calc(100% - 20px);
 			grid-column: 2 / 3;
 			grid-row: 1 / 4;
+
+			&:not(.num-media-1) {
+				height: 300px;
+			}
 		}
 	}
 }

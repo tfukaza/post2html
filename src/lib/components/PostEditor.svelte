@@ -117,7 +117,6 @@
 					</Tooltip.Content>
 				</Tooltip.Root>
 			</div>
-
 			<Select.Root
 				selected={{
 					value: postConfig.imageStyle ? postConfig.imageStyle : 'grid',

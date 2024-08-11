@@ -84,3 +84,8 @@ export interface ProcessedXData {
 	favorite_count: number; // Number of likes
 	conversation_count: number; // Number of replies
 }
+
+export interface XPostConfig {
+	imageStyle: 'grid' | 'carousel'; // Style to display images
+	imageFull: boolean; // Whether to display images in full size if it is clicked
+}

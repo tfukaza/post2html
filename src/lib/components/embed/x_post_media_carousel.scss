@@ -8,12 +8,6 @@
 		grid-template-rows: 1fr;
 		align-items: center;
 
-		// &.num-media-1 > div > img {
-		// 	width: calc(100% - 40px);
-		// }
-		// p:first-child {
-		// 	// display: none;
-		// }
 		&.num-media-1 {
 			margin: 0px 20px 20px 20px;
 			> div {
@@ -116,8 +110,6 @@
 			grid-template-columns: 1fr;
 			grid-template-rows: 1fr auto auto 1fr;
 
-			// margin-right: 20px;
-
 			.profile {
 				grid-row: 2 / 3;
 			}
@@ -128,9 +120,6 @@
 		}
 
 		.media {
-			// p:first-child {
-			// 	display: block;
-			// }
 			&.num-media-1 {
 				margin: 20px;
 				grid-column: 2 / 3;
