@@ -1,7 +1,7 @@
 <script lang="ts">
-	import type { ProcessedXData } from '$lib/x_types';
+	import type { ProcessedXData, XPostConfig } from '$lib/x_types';
 	import { processXJson } from '$lib/x_process';
-	import { postConfig, postJson, postHTML } from '$components/store';
+	import { postJson, postHTML } from '$components/store';
 
 	import * as Select from '$lib/components/ui/select';
 	import * as Tooltip from '$lib/components/ui/tooltip';
@@ -9,10 +9,11 @@
 	import Code from '$components/Code.svelte';
 	import { Input } from '$lib/components/ui/input';
 	import { Button } from '$lib/components/ui/button';
+	import { Switch } from '$lib/components/ui/switch/index.js';
 
 	let postJsonData: ProcessedXData | null = null;
 	postJson.subscribe((value) => {
-		postJsonData = value<ProcessedXData>;
+		postJsonData = value;
 	});
 
 	let postURL: string = '';
@@ -47,6 +48,13 @@
 					return processXJson(data);
 				});
 			});
+	}
+
+	function setConfig(property: string, value: any) {
+		postJson.update((v) => {
+			v.config[property] = value;
+			return { ...v };
+		});
 	}
 
 	let postFinalHTML = '';
@@ -117,14 +125,12 @@
 					</Tooltip.Content>
 				</Tooltip.Root>
 			</div>
-
 			<Select.Root
 				selected={{
-					value: postConfig.imageStyle ? postConfig.imageStyle : 'grid',
-					label: postConfig.imageStyle ? postConfig.imageStyle : 'Grid'
+					value: postJsonData.config.imageStyle ? postJsonData.config.imageStyle : 'grid',
+					label: postJsonData.config.imageStyle ? postJsonData.config.imageStyle : 'Grid'
 				}}
-				onSelectedChange={(e) =>
-					postConfig.update((config) => ({ ...config, imageStyle: e.value }))}
+				onSelectedChange={(e) => setConfig('imageStyle', e.value)}
 			>
 				<Select.Trigger class="w-[180px]">
 					<Select.Value placeholder="Select..." />
@@ -134,6 +140,31 @@
 					<Select.Item value="carousel">Carousel</Select.Item>
 				</Select.Content>
 			</Select.Root>
+		</div>
+		<div class="config-item">
+			<div class="flex items-center gap-1">
+				<h3>Show full size image</h3>
+				<Tooltip.Root>
+					<Tooltip.Trigger class="inline"><IconHelp /></Tooltip.Trigger>
+					<Tooltip.Content>
+						<div class="information flex flex-col gap-4 p-4">
+							<p class="mb-2">
+								If enabled, when a user clicks or taps on an image, the image will expand to fill
+								the embedded post. This is especially useful if you selected the grid layout, as the
+								images tend to get cropped and shrunken.
+							</p>
+
+							<p>To close the image, the user can click or tap on the image again.</p>
+						</div></Tooltip.Content
+					>
+				</Tooltip.Root>
+			</div>
+
+			<Switch
+				id="image-full"
+				onCheckedChange={(e) => setConfig('imageFull', e)}
+				checked={postJsonData.config.imageFull}
+			/>
 		</div>
 	</div>
 	<div class="divided">
@@ -249,9 +280,15 @@
 		flex-direction: row;
 		gap: 20px;
 		align-items: center;
+		margin-bottom: 16px;
+		justify-content: space-between;
 
 		&:first-child {
 			width: max-content;
+		}
+
+		&:last-child {
+			margin-bottom: 0;
 		}
 	}
 

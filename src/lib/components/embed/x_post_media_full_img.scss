@@ -1,0 +1,22 @@
+.x-post {
+	.full-img {
+		position: fixed;
+		top: 0;
+		left: 0;
+
+		object-fit: contain;
+		width: 100cqw;
+		height: 100cqb;
+
+		z-index: 1000;
+
+		box-shadow:
+			0 0 0 1000px rgba(0, 0, 0, 0.64),
+			inset 0 0 0 1000px rgba(0, 0, 0, 0.64);
+
+		display: none;
+		&.full {
+			display: block;
+		}
+	}
+}
