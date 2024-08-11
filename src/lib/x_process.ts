@@ -35,6 +35,10 @@ function processXJson(json: OriginalXData): ProcessedXData {
 	const { urls, hashtags } = entities;
 
 	return {
+		config: {
+			imageStyle: 'grid',
+			imageFull: false
+		},
 		postUrl: `https://twitter.com/${screen_name}/status/${id_str}`,
 		user: {
 			name,

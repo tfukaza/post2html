@@ -53,7 +53,13 @@ export interface OriginalXData {
 	__typename: string; // Post type
 }
 
+interface XPostConfig {
+	imageStyle: 'grid' | 'carousel'; // Style to display images
+	imageFull: boolean; // Whether to display images in full size if it is clicked
+}
+
 export interface ProcessedXData {
+	config: XPostConfig; // Post configuration
 	postUrl: string; // Post URL
 	user: {
 		name: string; // User name
@@ -83,9 +89,4 @@ export interface ProcessedXData {
 	created_at: string; // Post creation date in ISO format
 	favorite_count: number; // Number of likes
 	conversation_count: number; // Number of replies
-}
-
-export interface XPostConfig {
-	imageStyle: 'grid' | 'carousel'; // Style to display images
-	imageFull: boolean; // Whether to display images in full size if it is clicked
 }

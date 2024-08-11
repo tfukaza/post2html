@@ -4,23 +4,12 @@
 	import XPostMediaCarousel from './XPostMediaCarousel.svelte';
 	import XPostStyles from '$components/embed/x_post.scss?inline';
 	import XPostMediaGrid from './XPostMediaGrid.svelte';
-	import { postConfig, postJson } from '$components/store';
 
 	let postStyle: string = XPostStyles;
 
+	export let postJsonData: ProcessedXData | null = null;
+	export let postConfigData: XPostConfig | null = null;
 	export let actionCallback: () => void;
-
-	let postJsonData: ProcessedXData | null = null;
-	postJson.subscribe((value) => {
-		postJsonData = value;
-	});
-	let postConfigData: XPostConfig = {
-		imageStyle: 'grid',
-		imageFull: false
-	};
-	postConfig.subscribe((value) => {
-		postConfigData = value;
-	});
 
 	afterUpdate(() => {
 		actionCallback();
@@ -91,10 +80,10 @@
 			</div>
 		</div>
 		{#if postJsonData.media.length > 0}
-			{#if postConfigData && postConfigData.imageStyle === 'carousel'}
-				<XPostMediaCarousel {postJsonData} {postConfigData} />
-			{:else if postConfigData && postConfigData.imageStyle === 'grid'}
-				<XPostMediaGrid {postJsonData} {postConfigData} />
+			{#if postConfigData.imageStyle === 'carousel'}
+				<XPostMediaCarousel {postJsonData} />
+			{:else if postConfigData.imageStyle === 'grid'}
+				<XPostMediaGrid {postJsonData} />
 			{:else}
 				<p>Invalid image style</p>
 			{/if}

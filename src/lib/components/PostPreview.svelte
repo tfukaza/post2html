@@ -10,18 +10,13 @@
 	import * as Tooltip from '$lib/components/ui/tooltip';
 
 	import IconHelp from '~icons/material-symbols/help';
-	import { postConfig, postHTML, postJson } from '$components/store';
+	import { postHTML, postJson } from '$components/store';
 	import { onMount } from 'svelte';
 
 	let postDom: Node | null = null;
 
 	let postPreviewHTML: string = '';
 
-	let postConfigData = {};
-
-	postConfig.subscribe((value) => {
-		postConfigData = value;
-	});
 	let postJsonData: ProcessedXData | null = null;
 	postJson.subscribe((value) => {
 		postJsonData = value;
@@ -161,7 +156,11 @@
 			<div id="phone-island"></div>
 			<div id="preview-scroll">
 				<div bind:this={postDom} style="display:none">
-					<XPost actionCallback={finalizeHTML} />
+					<XPost
+						{postJsonData}
+						postConfigData={postJsonData.config}
+						actionCallback={finalizeHTML}
+					/>
 				</div>
 
 				{@html postPreviewHTML}

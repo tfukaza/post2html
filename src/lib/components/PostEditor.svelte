@@ -1,7 +1,7 @@
 <script lang="ts">
-	import type { ProcessedXData } from '$lib/x_types';
+	import type { ProcessedXData, XPostConfig } from '$lib/x_types';
 	import { processXJson } from '$lib/x_process';
-	import { postConfig, postJson, postHTML } from '$components/store';
+	import { postJson, postHTML } from '$components/store';
 
 	import * as Select from '$lib/components/ui/select';
 	import * as Tooltip from '$lib/components/ui/tooltip';
@@ -13,7 +13,7 @@
 
 	let postJsonData: ProcessedXData | null = null;
 	postJson.subscribe((value) => {
-		postJsonData = value<ProcessedXData>;
+		postJsonData = value;
 	});
 
 	let postURL: string = '';
@@ -48,6 +48,13 @@
 					return processXJson(data);
 				});
 			});
+	}
+
+	function setConfig(property: string, value: any) {
+		postJson.update((v) => {
+			v.config[property] = value;
+			return { ...v };
+		});
 	}
 
 	let postFinalHTML = '';
@@ -120,11 +127,10 @@
 			</div>
 			<Select.Root
 				selected={{
-					value: postConfig.imageStyle ? postConfig.imageStyle : 'grid',
-					label: postConfig.imageStyle ? postConfig.imageStyle : 'Grid'
+					value: postJsonData.config.imageStyle ? postJsonData.config.imageStyle : 'grid',
+					label: postJsonData.config.imageStyle ? postJsonData.config.imageStyle : 'Grid'
 				}}
-				onSelectedChange={(e) =>
-					postConfig.update((config) => ({ ...config, imageStyle: e.value }))}
+				onSelectedChange={(e) => setConfig('imageStyle', e.value)}
 			>
 				<Select.Trigger class="w-[180px]">
 					<Select.Value placeholder="Select..." />
@@ -179,8 +185,8 @@
 
 			<Switch
 				id="image-full"
-				onCheckedChange={(field) =>
-					postConfig.update((config) => ({ ...config, imageFull: field }))}
+				onCheckedChange={(e) => setConfig('imageFull', e)}
+				checked={postJsonData.config.imageFull}
 			/>
 		</div>
 	</div>

@@ -6,38 +6,38 @@
 	import XPostMediaFullImg from '$components/embed/x_post_media_full_img.scss?inline';
 
 	export let postJsonData: ProcessedXData | null = null;
-	export let postConfigData: XPostConfig | null = null;
 
-	let postStyle: string =
-		XPostMediaStyles + ' ' + (postConfigData && postConfigData.imageFull ? XPostMediaFullImg : '');
+	$: postStyle =
+		XPostMediaStyles +
+		' ' +
+		(postJsonData && postJsonData.config.imageFull ? XPostMediaFullImg : '');
 </script>
 
-{#if postJsonData && postConfigData}
+{#if postJsonData}
 	{@html `<style>${postStyle}</style>`}
 	<script>
-		let ci = 0;
-		window.onload = function () {
+		window.addEventListener('load', () => {
 			let sc = document.getElementById('scroll-container');
 			let left = document.getElementById('left');
 			let right = document.getElementById('right');
 
-			function carousel(e, d, n) {
+			window.carousel = function (e, d, n) {
 				e.stopPropagation();
+				let ci = parseInt(sc.dataset.mediaIndex);
 				ci += d;
 				ci = ci < 0 ? 0 : ci > n ? n : ci;
+				sc.dataset.mediaIndex = ci;
 				sc.scrollLeft = sc.children[ci + 1].offsetLeft - sc.children[1].offsetLeft;
 				left.disabled = ci == 0;
 				right.disabled = ci == n;
-			}
-			left.addEventListener('click', (e) => carousel(e, -1, sc.dataset.mediaCount - 1));
-			right.addEventListener('click', (e) => carousel(e, 1, sc.dataset.mediaCount - 1));
-		};
+			};
+		});
 	</script>
-	{#if postConfigData.imageFull}
+	{#if postJsonData.config.imageFull}
 		<XPostMediaFull {postJsonData} />
 	{/if}
 	<div class={`media num-media-${postJsonData.media.length} media-0`}>
-		<div id="scroll-container" data-media-count={postJsonData.media.length}>
+		<div id="scroll-container" data-media-count={postJsonData.media.length} data-media-index="0">
 			{#if postJsonData.media.length > 1}
 				<p />
 				{#each postJsonData.media as media, i}
@@ -49,8 +49,10 @@
 			{/if}
 		</div>
 		{#if postJsonData.media.length > 1}
-			<button id="left" disabled>🡐</button>
-			<button id="right">🡒</button>
+			<button id="left" disabled onclick="carousel(event, -1, {postJsonData.media.length - 1})"
+				>🡐</button
+			>
+			<button id="right" onclick="carousel(event, 1, {postJsonData.media.length - 1})">🡒</button>
 		{/if}
 	</div>
 {/if}

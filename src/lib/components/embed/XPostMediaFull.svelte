@@ -9,7 +9,7 @@
 
 {#if postJsonData}
 	<script>
-		window.onload = () => {
+		window.addEventListener('load', () => {
 			let g = document.querySelectorAll('.media img');
 			let f = document.querySelectorAll('.full-img');
 
@@ -26,7 +26,7 @@
 					p.classList.remove('full');
 				});
 			});
-		};
+		});
 	</script>
 	{#each postJsonData.media as media, i}
 		<img src={media.media_url} alt={media.display_url} class="full-img" id={`media-${i}`} />

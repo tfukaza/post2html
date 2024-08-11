@@ -6,15 +6,14 @@
 	import XPostMediaFull from './XPostMediaFull.svelte';
 
 	export let postJsonData: ProcessedXData | null = null;
-	export let postConfigData: XPostConfig | null = null;
 
-	let postStyle: string =
-		XPostMediaStyles + (postConfigData && postConfigData.imageFull ? XPostMediaFullImg : '');
+	$: postStyle =
+		XPostMediaStyles + (postJsonData && postJsonData.config.imageFull ? XPostMediaFullImg : '');
 </script>
 
-{#if postJsonData && postConfigData}
+{#if postJsonData}
 	{@html `<style>${postStyle}</style>`}
-	{#if postConfigData.imageFull}
+	{#if postJsonData.config.imageFull}
 		<XPostMediaFull {postJsonData} />
 	{/if}
 	<div class={`media num-media-${postJsonData.media.length} media-0`}>
