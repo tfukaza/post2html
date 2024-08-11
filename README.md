@@ -1,36 +1,21 @@
-# SvelteKit Demo app
+# post2html
 
-The official demo app for SvelteKit, hosted on Vercel.
+A better way to embed social media posts on your website.
 
-## Deploy Your Own
+- ⚡**Fast**: Loads nearly instantly after users visit your website
+- 📱**Responsive**: Modifies the layout of the post to fit a variety of screen sizes
+- 🎨**Customizable**: Provides options to customize the appearance of the post
+- 🛡️**Resilient**: Maintains its appearance even if the social media post is deleted (minus images and videos)
 
-[![Deploy with Vercel](https://vercel.com/button)](https://vercel.com/new/clone?repository-url=https%3A%2F%2Fgithub.com%2Fvercel%2Fvercel%2Ftree%2Fmain%2Fexamples%2Fsveltekit-1&project-name=sveltekit-vercel&repository-name=sveltekit-vercel&demo-title=SvelteKit%20%2B%20Vercel&demo-url=https%3A%2F%2Fsveltekit-template.vercel.app%2F)
+**Try it now** 👉 [post2html.vercel.app](https://post2html.vercel.app)
 
-_Live Example: https://sveltekit-template.vercel.app_
+Currently supports:
 
-## Developing
+- X(Twitter)
+- ... that's it for now 😅
 
-Once you've created a project and installed dependencies with `npm install` (or `pnpm install` or `yarn`), start a development server:
+## How?
 
-```bash
-npm run dev
+Many social media post embeddings work by fetching data from their server _after_ your website has loaded, and using it to _reconstruct_ the post. This fetch & reconstruct process can be slow.
 
-# or start the server and open the app in a new browser tab
-npm run dev -- --open
-```
-
-## Building
-
-To create a production version of your app:
-
-```bash
-npm run build
-```
-
-You can preview the production build with `npm run preview`.
-
-## Speed Insights
-
-Once deployed on Vercel, you can benefit from [Speed Insights](https://vercel.com/docs/concepts/speed-insights) simply by navigating to Vercel's dashboard, clicking on the 'Speed Insights' tab, and enabling the product.
-
-You will get data once your application will be re-deployed and will receive visitors.
+Instead, `post2html` takes a link to a social media post and generates a copy & paste-able code snippet that you can include in your website. In the process, it also allows for more customization🎨📱options than traditional embeds. The resulting code snippet contains all the data needed to display the post (minus images and videos), so it loads nearly instantly⚡after users visit your website, and can also retain its appearance even if the social media post is deleted🛡️.
