@@ -1,3 +1,4 @@
+import { t } from 'vitest/dist/index-5aad25c1';
 import { OriginalXData, ProcessedXData } from './x_types';
 
 // getMediaUrl is taken from react-tweet library by Vercel.
@@ -21,6 +22,7 @@ export const getMediaUrl = (media: any, size: 'small' | 'medium' | 'large'): str
  * @returns
  */
 function processXJson(json: OriginalXData): ProcessedXData {
+	console.debug('Processing X JSON:', json);
 	const {
 		entities,
 		user,
@@ -29,7 +31,8 @@ function processXJson(json: OriginalXData): ProcessedXData {
 		mediaDetails,
 		created_at,
 		favorite_count,
-		conversation_count
+		conversation_count,
+		card
 	} = json;
 	const { name, screen_name, profile_image_url_https, is_blue_verified, verified } = user;
 	const { urls, hashtags } = entities;
@@ -76,6 +79,13 @@ function processXJson(json: OriginalXData): ProcessedXData {
 					};
 				})) ||
 			[],
+		card:
+			(card && {
+				url: card.url,
+				title: card.binding_values.title.string_value,
+				image_url: card.binding_values.thumbnail_image_large.image_value.url
+			}) ||
+			null,
 
 		id_str,
 		created_at,

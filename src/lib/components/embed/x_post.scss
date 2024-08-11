@@ -18,8 +18,8 @@
 	overflow: hidden;
 
 	cursor: pointer;
-
-	&:hover {
+	// Only hover when an anchor child element is not being hovered
+	&:hover:not(:has(a:hover)) {
 		background-color: #f9f9f9;
 		transition: background-color 0.2s;
 	}
@@ -70,6 +70,10 @@
 		a {
 			color: #099ef5;
 			text-decoration: none;
+
+			&:hover {
+				text-decoration: underline;
+			}
 		}
 	}
 }

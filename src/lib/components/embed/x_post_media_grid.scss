@@ -80,6 +80,12 @@
 			&:not(.num-media-1) {
 				height: 300px;
 			}
+
+			&.num-media-1 {
+				img {
+					border-radius: 8px;
+				}
+			}
 		}
 	}
 }
