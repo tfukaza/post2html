@@ -1,5 +1,12 @@
 /* JSON returned by X's embedding API */
 export interface OriginalXData {
+	card: {
+		// Links that come with a banner image
+		name: string; // Card name
+		url: string; // Card URL
+		binding_values: [string, any];
+		card_platform: [string, any];
+	};
 	conversation_count: number; // Number of replies
 	created_at: string; // Post creation date in ISO format
 	display_text_range: [number, number]; // Range of text to display in the embedded version
@@ -65,25 +72,33 @@ export interface ProcessedXData {
 		name: string; // User name
 		screen_name: string; // User screen name
 		profile_image_url_https: string; // User profile image URL
-		is_blue_verified: boolean; // Whether the user is verified
-		verified: boolean; // Whether the user is verified
+		is_blue_verified: boolean; // Whether the user is verified by a blue check mark
+		verified: boolean; // Whether the user is verified by a gold check mark
 	};
-	text: string; // Post text
+	text: string; // Text content of the post
 	media: {
-		display_url: string; // Media display URL
-		expanded_url: string; // Media expanded URL
-		media_url: string; // Media URL
-		url: string; // Media URL
+		// Media in the post, such as images or videos
+		display_url: string; // Text representation of the media URL, used as alt text
+		expanded_url: string; // ?
+		media_url: string; // Actual link to the media
+		url: string; // ?
 	}[];
 	urls: {
-		display_url: string; // URL display URL
-		expanded_url: string; // URL expanded URL
-		url: string; // URL
+		// URLs in the post
+		display_url: string; // How the URL is displayed in the post
+		expanded_url: string; // Actual URL of the link
+		url: string; // ?
 	}[];
 	hashTags: {
 		indices: [number, number]; // Range of text indices for the hashtag
 		text: string; // Hashtag text
 	}[]; // Hashtags in the post
+	card: {
+		// Cards in the post
+		url: string; // Card URL
+		title: string; // Card title
+		image_url: string; // Card image URL
+	};
 
 	id_str: string; // Post ID as a string
 	created_at: string; // Post creation date in ISO format

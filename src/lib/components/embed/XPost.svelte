@@ -4,6 +4,7 @@
 	import XPostMediaCarousel from './XPostMediaCarousel.svelte';
 	import XPostStyles from '$components/embed/x_post.scss?inline';
 	import XPostMediaGrid from './XPostMediaGrid.svelte';
+	import XPostCard from './XPostCard.svelte';
 
 	let postStyle: string = XPostStyles;
 
@@ -29,6 +30,9 @@
 		let text = postJsonData.text;
 		if (postJsonData.urls !== undefined) {
 			postJsonData.urls.forEach((url) => {
+				if (postJsonData.card && postJsonData.card.url === url.url) {
+					text = text.replace(url.url, '');
+				}
 				text = text.replace(
 					url.url,
 					`<a href="${url.expanded_url}" target="_blank">${url.display_url}</a>`
@@ -58,7 +62,11 @@
 
 	$: className =
 		'x-post' +
-		(postJsonData && postJsonData.media && postJsonData.media.length > 0 ? ' has-media' : '') +
+		(postJsonData &&
+		((postJsonData.media && postJsonData.media.length > 0) ||
+			(postJsonData.card && postJsonData.card.image_url))
+			? ' has-media'
+			: '') +
 		(postText && postText.length > 0 ? ' has-text' : '');
 </script>
 
@@ -79,6 +87,9 @@
 				{@html postText}
 			</div>
 		</div>
+		{#if postJsonData.card}
+			<XPostCard {postJsonData} />
+		{/if}
 		{#if postJsonData.media.length > 0}
 			{#if postConfigData.imageStyle === 'carousel'}
 				<XPostMediaCarousel {postJsonData} />
