@@ -4,6 +4,20 @@
 	--font-body: 'Inter Tight', sans-serif;
 	--font-mono: 'Fira Mono', monospace;
 	--color-text: rgb(79, 83, 84);
+
+	--color-primary: #2b2c2d;
+	--color-secondary: #45474d;
+
+	--color-border: #dcdcdc;
+
+
+	--spacing-1: 32px;
+	--spacing-2: 24px;
+	--spacing-3: 16px;
+	--spacing-4: 12px;
+	--spacing-5: 8px;
+	--spacing-6: 4px;
+
 }
 
 body {
@@ -61,3 +75,5 @@ pre {
 	overflow-x: auto;
 	color: var(--color-text);
 }
+
+

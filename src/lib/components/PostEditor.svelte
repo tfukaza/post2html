@@ -1,18 +1,23 @@
 <script lang="ts">
-	import type { ProcessedXData, XPostConfig } from '$lib/x_types';
+	import type { ProcessedXData, OriginalXData } from '$lib/x_types';
 	import { processXJson } from '$lib/x_process';
 	import { postJson, postHTML } from '$components/store';
+	
 
-	import * as Select from '$lib/components/ui/select';
-	import * as Tooltip from '$lib/components/ui/tooltip';
 	import IconHelp from '~icons/material-symbols/help';
+	import IconChevronRight from '~icons/material-symbols/chevron-right';
 	import Code from '$components/Code.svelte';
-	import { Input } from '$lib/components/ui/input';
-	import { Button } from '$lib/components/ui/button';
-	import { Switch } from '$lib/components/ui/switch/index.js';
+	import { Button } from 'flowbite-svelte';
+	import { Popover } from 'flowbite-svelte';
+	import { Toggle } from 'flowbite-svelte';
+	import { Select, Label } from 'flowbite-svelte';
+	import { Textarea } from 'flowbite-svelte';
+	import { AccordionItem, Accordion } from 'flowbite-svelte';
+	import {Hr } from 'flowbite-svelte';
+
 
 	let postJsonData: ProcessedXData | null = null;
-	postJson.subscribe((value) => {
+	postJson.subscribe((value: ProcessedXData) => {
 		postJsonData = value;
 	});
 
@@ -43,15 +48,16 @@
 		}
 		fetch(`/api/proxy_x?post-id=${postID}`)
 			.then((response) => response.json())
-			.then((data) => {
-				postJson.update((value) => {
+			.then((data: OriginalXData) => {
+				postJson.update((_: ProcessedXData) => {
 					return processXJson(data);
 				});
 			});
 	}
 
 	function setConfig(property: string, value: any) {
-		postJson.update((v) => {
+		console.log(property, value);
+		postJson.update((v: ProcessedXData) => {
 			v.config[property] = value;
 			return { ...v };
 		});
@@ -72,122 +78,138 @@
 			return v;
 		});
 	}
+
+	let showAdvancedConfig = false;
+
 </script>
 
-<div class="divided">
-	<h3>1. Paste the Link</h3>
-	<span></span>
+<div class="flex flex-col gap-4">
+	<h2>post2html</h2>
 </div>
+
+<Hr />
+
 <div id="url-section">
 	<form>
-		<textarea
+		<Textarea
 			placeholder="Paste the X (Twitter) link here"
 			bind:value={postURL}
 			on:input={() => (disableSubmit = !checkUrlValidity(postURL))}
-		></textarea>
+		></Textarea>
 		<Button class={disableSubmit ? 'disable' : ''} on:click={onSubmit}>Submit</Button>
 	</form>
 </div>
 {#if postJsonData}
-	<div class="divided">
-		<h3>2. Configure</h3>
-		<span></span>
-	</div>
+	<Hr />
 	<div id="config-section">
 		<div class="config-item">
 			<div class="flex items-center gap-1">
 				<h3>Image Style</h3>
-				<Tooltip.Root>
-					<Tooltip.Trigger class="inline"><IconHelp /></Tooltip.Trigger>
-					<Tooltip.Content>
-						<div class="information flex flex-col gap-4 p-4">
-							<p class="mb-2">Choose the style of the images in the post</p>
-							<div class="flex flex-row justify-center gap-8">
-								<div class="flex flex-col items-center gap-1" id="image-style-tip-grid">
-									<div>
-										<div></div>
-										<div></div>
-										<div></div>
-										<div></div>
-									</div>
-									<p class="text-slate-400">Grid</p>
+				<IconHelp id="image-style-tooltip"/>
+				<Popover class="w-64 text-sm " triggeredBy="#image-style-tooltip">
+					<div class="information flex flex-col gap-4 p-4">
+						<p class="mb-2">Choose the style of the images in the post</p>
+						<div class="flex flex-row justify-center gap-8">
+							<div class="flex flex-col items-center gap-1" id="image-style-tip-grid">
+								<div>
+									<div></div>
+									<div></div>
+									<div></div>
+									<div></div>
 								</div>
-								<div class="flex flex-col items-center gap-1" id="image-style-tip-caraousel">
-									<div>
-										<div></div>
-										<div></div>
-										<div></div>
-									</div>
-									<p class="text-slate-400">Carousel</p>
-								</div>
+								<p class="text-slate-400">Grid</p>
 							</div>
-							<hr />
-							<p>
-								<b>Grid</b> layouts closely resemble how images are displayed on X(Twitter). The images
-								may become small and hard to see, especially if there are two or more images, although
-								it has the advantage of keeping the code size small.
-							</p>
-							<p>
-								<b>Carousel</b> layouts allow images to be displayed in a larger size, but the code size
-								of the embedding is larger compared to the grid layout.
-							</p>
+							<div class="flex flex-col items-center gap-1" id="image-style-tip-caraousel">
+								<div>
+									<div></div>
+									<div></div>
+									<div></div>
+								</div>
+								<p class="text-slate-400">Carousel</p>
+							</div>
 						</div>
-					</Tooltip.Content>
-				</Tooltip.Root>
+						<hr />
+						<p>
+							<b>Grid</b> layouts closely resemble how images are displayed on X(Twitter). The images
+							may become small and hard to see, especially if there are two or more images, although
+							it has the advantage of keeping the code size small.
+						</p>
+						<p>
+							<b>Carousel</b> layouts allow images to be displayed in a larger size, but the code size
+							of the embedding is larger compared to the grid layout.
+						</p>
+					</div>
+				</Popover>
 			</div>
-			<Select.Root
-				selected={{
-					value: postJsonData.config.imageStyle ? postJsonData.config.imageStyle : 'grid',
-					label: postJsonData.config.imageStyle ? postJsonData.config.imageStyle : 'Grid'
-				}}
-				onSelectedChange={(e) => setConfig('imageStyle', e.value)}
-			>
-				<Select.Trigger class="w-[180px]">
-					<Select.Value placeholder="Select..." />
-				</Select.Trigger>
-				<Select.Content>
-					<Select.Item value="grid">Grid</Select.Item>
-					<Select.Item value="carousel">Carousel</Select.Item>
-				</Select.Content>
-			</Select.Root>
+			<Label>
+				<Select class="" 
+				items={ [
+					{value: 'grid', name: 'Grid'},
+					{value: 'carousel', name: 'Carousel'}
+				]}
+				size="sm"
+				on:change={(e) => setConfig('imageStyle', e && e.target ? e.target.value : 'grid')} />
+			</Label>
 		</div>
 		<div class="config-item">
 			<div class="flex items-center gap-1">
 				<h3>Show full size image</h3>
-				<Tooltip.Root>
-					<Tooltip.Trigger class="inline"><IconHelp /></Tooltip.Trigger>
-					<Tooltip.Content>
-						<div class="information flex flex-col gap-4 p-4">
-							<p class="mb-2">
-								If enabled, when a user clicks or taps on an image, the image will expand to fill
-								the embedded post. This is especially useful if you selected the grid layout, as the
-								images tend to get cropped and shrunken.
-							</p>
+				<IconHelp id="show-full-size-tooltip"/>
+				<Popover class="w-64 text-sm " triggeredBy="#show-full-size-tooltip">
+					<div class="information flex flex-col gap-4 p-4">
+						<p class="mb-2">
+							If enabled, when a user clicks or taps on an image, the image will expand to fill
+							the embedded post. This is especially useful if you selected the grid layout, as the
+							images tend to get cropped and shrunken.
+						</p>
 
-							<p>To close the image, the user can click or tap on the image again.</p>
-						</div></Tooltip.Content
-					>
-				</Tooltip.Root>
+						<p>To close the image, the user can click or tap on the image again.</p>
+					</div>
+				</Popover>
 			</div>
 
-			<Switch
-				id="image-full"
-				onCheckedChange={(e) => setConfig('imageFull', e)}
+			<Toggle
+				on:change={(e) => setConfig('imageFull', e.target.checked)}
 				checked={postJsonData.config.imageFull}
 			/>
 		</div>
-		<div class="config-item">
-			<textarea
-				placeholder="Paste in the full post text here"
-				bind:value={fullPostText}
-				on:input={() => setFullPostText()}
-			></textarea>
-		</div>
+	
+	
+			<div id="advanced-config">	
+			<button on:click={() => showAdvancedConfig = !showAdvancedConfig} class="flex items-center gap-1 mb-4">
+				<h3>Advanced Config</h3>
+				<span class={showAdvancedConfig ? 'rotate-90' : ''}>
+					<IconChevronRight />
+				</span>
+			</button>	
+			{#if showAdvancedConfig}
+				<div class="config-item column var-height">
+					<div class="flex items-center gap-1">
+						<h3>Full Post Text</h3>
+						<IconHelp id="full-post-text-tooltip"/>
+						<Popover class="w-64 text-sm " triggeredBy="#full-post-text-tooltip">
+							<div class="information flex flex-col gap-4 p-4">
+								<p class="mb-2">
+									By default, embedded X posts can only display up to 140 characters of text. 
+									If you want to display more, you can copy and paste the full text from the original post here.
+									post2html will automatically process the text to convert hashtags and mentions into clickable links.
+								</p>
+
+								
+							</div>
+						</Popover>
+					</div>
+						<Textarea
+							placeholder="Paste in the full post text here"
+							bind:value={fullPostText}
+							on:input={() => setFullPostText()}
+					></Textarea>
+				</div>
+				{/if}
+			</div>
+		
 	</div>
-	<div class="divided">
-		<h3>3. Copy the Code</h3>
-		<span></span>
-	</div>
+	<Hr />
 	<div id="code-section">
 		<Code copyText={postFinalHTML} />
 		<p>Size: {postFinalHTML.length} bytes</p>
@@ -267,45 +289,30 @@
 		}
 	}
 
-	.divided {
-		width: 100%;
-		margin-bottom: 16px;
-		display: flex;
-		flex-direction: row;
-		align-items: center;
-		gap: 10px;
 
-		h3 {
-			font-size: 0.9rem;
-
-			margin: 0;
-			width: max-content;
-		}
-		span {
-			margin: 0;
-			flex-grow: 1;
-
-			height: 2px;
-			background-color: rgb(237, 237, 237);
-			border-radius: 1px;
-			transform: translateY(2px);
-		}
-	}
 
 	.config-item {
 		display: flex;
-		flex-direction: row;
-		gap: 20px;
+		position: relative;
+		// z-index: 0;
+
 		align-items: center;
-		margin-bottom: 16px;
+		margin-bottom: var(--spacing-4);
+		width: 100%;
 		justify-content: space-between;
 
-		&:first-child {
-			width: max-content;
+		min-height: 40px;
+
+
+
+		&.row {
+			flex-direction: row;
 		}
 
-		&:last-child {
-			margin-bottom: 0;
+		&.column {
+			align-items: flex-start;
+			flex-direction: column;
+			gap: var(--spacing-5);
 		}
 	}
 
@@ -338,6 +345,11 @@
 			font-family: monospace;
 			text-align: right;
 		}
+	}
+
+	#advanced-config {
+		border-left: 2px solid rgb(255, 85, 0);
+		padding-left: var(--spacing-4);
 	}
 
 	.preview-container {
