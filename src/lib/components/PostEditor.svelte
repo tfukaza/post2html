@@ -2,7 +2,6 @@
 	import type { ProcessedXData, OriginalXData } from '$lib/x_types';
 	import { processXJson } from '$lib/x_process';
 	import { postJson, postHTML } from '$components/store';
-	
 
 	import IconHelp from '~icons/material-symbols/help';
 	import IconChevronRight from '~icons/material-symbols/chevron-right';
@@ -12,9 +11,7 @@
 	import { Toggle } from 'flowbite-svelte';
 	import { Select, Label } from 'flowbite-svelte';
 	import { Textarea } from 'flowbite-svelte';
-	import { AccordionItem, Accordion } from 'flowbite-svelte';
-	import {Hr } from 'flowbite-svelte';
-
+	import { Hr } from 'flowbite-svelte';
 
 	let postJsonData: ProcessedXData | null = null;
 	postJson.subscribe((value: ProcessedXData) => {
@@ -80,7 +77,6 @@
 	}
 
 	let showAdvancedConfig = false;
-
 </script>
 
 <div class="flex flex-col gap-4">
@@ -105,7 +101,7 @@
 		<div class="config-item">
 			<div class="flex items-center gap-1">
 				<h3>Image Style</h3>
-				<IconHelp id="image-style-tooltip"/>
+				<IconHelp id="image-style-tooltip" />
 				<Popover class="w-64 text-sm " triggeredBy="#image-style-tooltip">
 					<div class="information flex flex-col gap-4 p-4">
 						<p class="mb-2">Choose the style of the images in the post</p>
@@ -142,24 +138,26 @@
 				</Popover>
 			</div>
 			<Label>
-				<Select class="" 
-				items={ [
-					{value: 'grid', name: 'Grid'},
-					{value: 'carousel', name: 'Carousel'}
-				]}
-				size="sm"
-				on:change={(e) => setConfig('imageStyle', e && e.target ? e.target.value : 'grid')} />
+				<Select
+					class=""
+					items={[
+						{ value: 'grid', name: 'Grid' },
+						{ value: 'carousel', name: 'Carousel' }
+					]}
+					size="sm"
+					on:change={(e) => setConfig('imageStyle', e && e.target ? e.target.value : 'grid')}
+				/>
 			</Label>
 		</div>
 		<div class="config-item">
 			<div class="flex items-center gap-1">
 				<h3>Show full size image</h3>
-				<IconHelp id="show-full-size-tooltip"/>
+				<IconHelp id="show-full-size-tooltip" />
 				<Popover class="w-64 text-sm " triggeredBy="#show-full-size-tooltip">
 					<div class="information flex flex-col gap-4 p-4">
 						<p class="mb-2">
-							If enabled, when a user clicks or taps on an image, the image will expand to fill
-							the embedded post. This is especially useful if you selected the grid layout, as the
+							If enabled, when a user clicks or taps on an image, the image will expand to fill the
+							embedded post. This is especially useful if you selected the grid layout, as the
 							images tend to get cropped and shrunken.
 						</p>
 
@@ -173,41 +171,41 @@
 				checked={postJsonData.config.imageFull}
 			/>
 		</div>
-	
-	
-			<div id="advanced-config">	
-			<button on:click={() => showAdvancedConfig = !showAdvancedConfig} class="flex items-center gap-1 mb-4">
+
+		<div id="advanced-config">
+			<button
+				on:click={() => (showAdvancedConfig = !showAdvancedConfig)}
+				class="mb-4 flex items-center gap-1"
+			>
 				<h3>Advanced Config</h3>
 				<span class={showAdvancedConfig ? 'rotate-90' : ''}>
 					<IconChevronRight />
 				</span>
-			</button>	
+			</button>
 			{#if showAdvancedConfig}
 				<div class="config-item column var-height">
 					<div class="flex items-center gap-1">
 						<h3>Full Post Text</h3>
-						<IconHelp id="full-post-text-tooltip"/>
+						<IconHelp id="full-post-text-tooltip" />
 						<Popover class="w-64 text-sm " triggeredBy="#full-post-text-tooltip">
 							<div class="information flex flex-col gap-4 p-4">
 								<p class="mb-2">
-									By default, embedded X posts can only display up to 140 characters of text. 
-									If you want to display more, you can copy and paste the full text from the original post here.
-									post2html will automatically process the text to convert hashtags and mentions into clickable links.
+									By default, embedded X posts can only display up to 140 characters of text. If you
+									want to display more, you can copy and paste the full text from the original post
+									here. post2html will automatically process the text to convert hashtags and
+									mentions into clickable links.
 								</p>
-
-								
 							</div>
 						</Popover>
 					</div>
-						<Textarea
-							placeholder="Paste in the full post text here"
-							bind:value={fullPostText}
-							on:input={() => setFullPostText()}
+					<Textarea
+						placeholder="Paste in the full post text here"
+						bind:value={fullPostText}
+						on:input={() => setFullPostText()}
 					></Textarea>
 				</div>
-				{/if}
-			</div>
-		
+			{/if}
+		</div>
 	</div>
 	<Hr />
 	<div id="code-section">
@@ -289,8 +287,6 @@
 		}
 	}
 
-
-
 	.config-item {
 		display: flex;
 		position: relative;
@@ -302,8 +298,6 @@
 		justify-content: space-between;
 
 		min-height: 40px;
-
-
 
 		&.row {
 			flex-direction: row;
