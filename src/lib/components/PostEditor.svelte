@@ -61,6 +61,17 @@
 	postHTML.subscribe((value) => {
 		postFinalHTML = value;
 	});
+
+	let fullPostText = '';
+
+	function setFullPostText() {
+		if (!postJson) return;
+
+		postJson.update((v: ProcessedXData) => {
+			v.text = fullPostText;
+			return v;
+		});
+	}
 </script>
 
 <div class="divided">
@@ -69,12 +80,11 @@
 </div>
 <div id="url-section">
 	<form>
-		<Input
-			type="text"
+		<textarea
 			placeholder="Paste the X (Twitter) link here"
 			bind:value={postURL}
 			on:input={() => (disableSubmit = !checkUrlValidity(postURL))}
-		/>
+		></textarea>
 		<Button class={disableSubmit ? 'disable' : ''} on:click={onSubmit}>Submit</Button>
 	</form>
 </div>
@@ -165,6 +175,13 @@
 				onCheckedChange={(e) => setConfig('imageFull', e)}
 				checked={postJsonData.config.imageFull}
 			/>
+		</div>
+		<div class="config-item">
+			<textarea
+				placeholder="Paste in the full post text here"
+				bind:value={fullPostText}
+				on:input={() => setFullPostText()}
+			></textarea>
 		</div>
 	</div>
 	<div class="divided">
@@ -303,7 +320,15 @@
 		form {
 			width: 100%;
 			display: flex;
+			flex-direction: column;
 			gap: 16px;
+
+			textarea {
+				height: 80px;
+				border-radius: 10px;
+				padding: 10px;
+				border: 1px solid rgb(223, 223, 223);
+			}
 		}
 	}
 
