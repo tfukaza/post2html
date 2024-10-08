@@ -10,14 +10,12 @@
 
 	--color-border: #dcdcdc;
 
-
 	--spacing-1: 32px;
 	--spacing-2: 24px;
 	--spacing-3: 16px;
 	--spacing-4: 12px;
 	--spacing-5: 8px;
 	--spacing-6: 4px;
-
 }
 
 body {
@@ -29,7 +27,11 @@ body {
 h1,
 h2,
 h3,
-p {
+h4,
+h5,
+h6,
+p,
+li {
 	font-family: var(--font-body);
 }
 
@@ -51,7 +53,8 @@ h3 {
 	color: #636568;
 }
 
-p {
+p,
+li {
 	line-height: 1.5;
 	color: var(--color-text);
 }
@@ -75,5 +78,3 @@ pre {
 	overflow-x: auto;
 	color: var(--color-text);
 }
-
-

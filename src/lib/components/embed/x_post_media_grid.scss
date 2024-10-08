@@ -77,14 +77,21 @@
 			grid-column: 2 / 3;
 			grid-row: 1 / 4;
 
-			&:not(.num-media-1) {
-				height: 300px;
+			&.num-media-2 {
+				img {
+					height: 300px;
+				}
 			}
 
 			&.num-media-1 {
 				img {
 					border-radius: 8px;
 				}
+			}
+
+			&.num-media-3,
+			&.num-media-4 {
+				min-height: 300px;
 			}
 		}
 	}

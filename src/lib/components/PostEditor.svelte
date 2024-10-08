@@ -12,19 +12,23 @@
 	import { Select, Label } from 'flowbite-svelte';
 	import { Textarea } from 'flowbite-svelte';
 	import { Hr } from 'flowbite-svelte';
+	import { Spinner } from 'flowbite-svelte';
 
 	let postJsonData: ProcessedXData | null = null;
-	postJson.subscribe((value: ProcessedXData) => {
-		postJsonData = value;
-	});
-
+	let postDataPromise: Promise<boolean> | null = null;
 	let postURL: string = '';
 	let disableSubmit = !checkUrlValidity(postURL);
+	let fetchProgress = 0;
 
-	function checkUrlValidity(url: string): boolean {
-		// A valid url contains 19 digits of numbers
-		const regex = /\d{19}/;
-		return regex.test(url);
+	function checkUrlValidity(url: string): [string, string] | null {
+		// A valid X post url is in the following format
+		// [username]/status/[19 digit number]
+		const regex = /([a-zA-Z0-9_]){4,15}\/status\/([0-9]{19})$/;
+		const match = url.match(regex);
+		if (match) {
+			return [match[0], match[1]];
+		}
+		return null;
 	}
 
 	function getPostID(url: string): string {
@@ -37,19 +41,39 @@
 		return '';
 	}
 
-	function onSubmit(event: MouseEvent) {
+	function handleUrlChange(url: string) {
+		const result = checkUrlValidity(url);
+		if (result) {
+			const [username, postID] = result;
+			disableSubmit = false;
+		} else {
+			disableSubmit = true;
+		}
+	}
+	function handleSubmit(event: MouseEvent) {
+		fetchProgress = 0;
+		postDataPromise = fetchPostData(event);
+	}
+
+	async function fetchPostData(event: MouseEvent) {
+		fetchProgress = 16;
 		const postID = getPostID(postURL);
 		if (postID === '') {
-			console.error('Invalid post ID');
-			return;
+			throw new Error('Invalid post ID');
 		}
-		fetch(`/api/proxy_x?post-id=${postID}`)
-			.then((response) => response.json())
-			.then((data: OriginalXData) => {
-				postJson.update((_: ProcessedXData) => {
-					return processXJson(data);
-				});
-			});
+		fetchProgress = 32;
+		const response = await fetch(`/api/proxy_x?post-id=${postID}`);
+		const data: OriginalXData = await response.json();
+		fetchProgress = 48;
+		const processedData = processXJson(data);
+		fetchProgress = 64;
+		postJson.update((_: ProcessedXData) => {
+			return processedData;
+		});
+		fetchProgress = 80;
+		postJsonData = processedData;
+		fetchProgress = 100;
+		return true;
 	}
 
 	function setConfig(property: string, value: any) {
@@ -90,129 +114,152 @@
 		<Textarea
 			placeholder="Paste the X (Twitter) link here"
 			bind:value={postURL}
-			on:input={() => (disableSubmit = !checkUrlValidity(postURL))}
+			on:input={() => handleUrlChange(postURL)}
+			style={postURL.length > 0 && disableSubmit ? 'box-shadow:inset 0 0 3px 3px #ffccc7;' : ''}
 		></Textarea>
-		<Button class={disableSubmit ? 'disable' : ''} on:click={onSubmit}>Submit</Button>
+
+		<Button on:click={handleSubmit} disabled={disableSubmit} class="flex items-center gap-2">
+			{#await postDataPromise}
+				<Spinner size="4" />
+				Submitting...
+			{:then success}
+				{#if disableSubmit}
+					Invalid X post URL
+				{:else}
+					Submit
+				{/if}
+			{:catch error}
+				Error
+			{/await}
+		</Button>
 	</form>
 </div>
-{#if postJsonData}
-	<Hr />
-	<div id="config-section">
-		<div class="config-item">
-			<div class="flex items-center gap-1">
-				<h3>Image Style</h3>
-				<IconHelp id="image-style-tooltip" />
-				<Popover class="w-64 text-sm " triggeredBy="#image-style-tooltip">
-					<div class="information flex flex-col gap-4 p-4">
-						<p class="mb-2">Choose the style of the images in the post</p>
-						<div class="flex flex-row justify-center gap-8">
-							<div class="flex flex-col items-center gap-1" id="image-style-tip-grid">
-								<div>
-									<div></div>
-									<div></div>
-									<div></div>
-									<div></div>
+{#await postDataPromise}
+	<div class="text-center">
+		<Spinner />
+	</div>
+{:then success}
+	{#if postJsonData}
+		<Hr />
+		<div id="config-section">
+			<div class="config-item">
+				<div class="flex items-center gap-1">
+					<h3>Image Style</h3>
+					<IconHelp id="image-style-tooltip" />
+					<Popover class="w-64 text-sm " triggeredBy="#image-style-tooltip">
+						<div class="information flex flex-col gap-4 p-4">
+							<p class="mb-2">Choose the style of the images in the post</p>
+							<div class="flex flex-row justify-center gap-8">
+								<div class="flex flex-col items-center gap-1" id="image-style-tip-grid">
+									<div>
+										<div></div>
+										<div></div>
+										<div></div>
+										<div></div>
+									</div>
+									<p class="text-slate-400">Grid</p>
 								</div>
-								<p class="text-slate-400">Grid</p>
-							</div>
-							<div class="flex flex-col items-center gap-1" id="image-style-tip-caraousel">
-								<div>
-									<div></div>
-									<div></div>
-									<div></div>
+								<div class="flex flex-col items-center gap-1" id="image-style-tip-caraousel">
+									<div>
+										<div></div>
+										<div></div>
+										<div></div>
+									</div>
+									<p class="text-slate-400">Carousel</p>
 								</div>
-								<p class="text-slate-400">Carousel</p>
 							</div>
+							<hr />
+							<p>
+								<b>Grid</b> layouts closely resemble how images are displayed on X(Twitter). The images
+								may become small and hard to see, especially if there are two or more images, although
+								it has the advantage of keeping the code size small.
+							</p>
+							<p>
+								<b>Carousel</b> layouts allow images to be displayed in a larger size, but the code size
+								of the embedding is larger compared to the grid layout.
+							</p>
 						</div>
-						<hr />
-						<p>
-							<b>Grid</b> layouts closely resemble how images are displayed on X(Twitter). The images
-							may become small and hard to see, especially if there are two or more images, although
-							it has the advantage of keeping the code size small.
-						</p>
-						<p>
-							<b>Carousel</b> layouts allow images to be displayed in a larger size, but the code size
-							of the embedding is larger compared to the grid layout.
-						</p>
-					</div>
-				</Popover>
-			</div>
-			<Label>
-				<Select
-					class=""
-					items={[
-						{ value: 'grid', name: 'Grid' },
-						{ value: 'carousel', name: 'Carousel' }
-					]}
-					size="sm"
-					on:change={(e) => setConfig('imageStyle', e && e.target ? e.target.value : 'grid')}
-				/>
-			</Label>
-		</div>
-		<div class="config-item">
-			<div class="flex items-center gap-1">
-				<h3>Show full size image</h3>
-				<IconHelp id="show-full-size-tooltip" />
-				<Popover class="w-64 text-sm " triggeredBy="#show-full-size-tooltip">
-					<div class="information flex flex-col gap-4 p-4">
-						<p class="mb-2">
-							If enabled, when a user clicks or taps on an image, the image will expand to fill the
-							embedded post. This is especially useful if you selected the grid layout, as the
-							images tend to get cropped and shrunken.
-						</p>
-
-						<p>To close the image, the user can click or tap on the image again.</p>
-					</div>
-				</Popover>
-			</div>
-
-			<Toggle
-				on:change={(e) => setConfig('imageFull', e.target.checked)}
-				checked={postJsonData.config.imageFull}
-			/>
-		</div>
-
-		<div id="advanced-config">
-			<button
-				on:click={() => (showAdvancedConfig = !showAdvancedConfig)}
-				class="mb-4 flex items-center gap-1"
-			>
-				<h3>Advanced Config</h3>
-				<span class={showAdvancedConfig ? 'rotate-90' : ''}>
-					<IconChevronRight />
-				</span>
-			</button>
-			{#if showAdvancedConfig}
-				<div class="config-item column var-height">
-					<div class="flex items-center gap-1">
-						<h3>Full Post Text</h3>
-						<IconHelp id="full-post-text-tooltip" />
-						<Popover class="w-64 text-sm " triggeredBy="#full-post-text-tooltip">
-							<div class="information flex flex-col gap-4 p-4">
-								<p class="mb-2">
-									By default, embedded X posts can only display up to 140 characters of text. If you
-									want to display more, you can copy and paste the full text from the original post
-									here. post2html will automatically process the text to convert hashtags and
-									mentions into clickable links.
-								</p>
-							</div>
-						</Popover>
-					</div>
-					<Textarea
-						placeholder="Paste in the full post text here"
-						bind:value={fullPostText}
-						on:input={() => setFullPostText()}
-					></Textarea>
+					</Popover>
 				</div>
-			{/if}
+				<Label>
+					<Select
+						class=""
+						items={[
+							{ value: 'grid', name: 'Grid' },
+							{ value: 'carousel', name: 'Carousel' }
+						]}
+						size="sm"
+						on:change={(e) => setConfig('imageStyle', e && e.target ? e.target.value : 'grid')}
+					/>
+				</Label>
+			</div>
+			<div class="config-item">
+				<div class="flex items-center gap-1">
+					<h3>Show full size image</h3>
+					<IconHelp id="show-full-size-tooltip" />
+					<Popover class="w-64 text-sm " triggeredBy="#show-full-size-tooltip">
+						<div class="information flex flex-col gap-4 p-4">
+							<p class="mb-2">
+								If enabled, when a user clicks or taps on an image, the image will expand to fill
+								the embedded post. This is especially useful if you selected the grid layout, as the
+								images tend to get cropped and shrunken.
+							</p>
+
+							<p>To close the image, the user can click or tap on the image again.</p>
+						</div>
+					</Popover>
+				</div>
+
+				<Toggle
+					on:change={(e) => setConfig('imageFull', e.target.checked)}
+					checked={postJsonData.config.imageFull}
+				/>
+			</div>
+
+			<div id="advanced-config">
+				<button
+					on:click={() => (showAdvancedConfig = !showAdvancedConfig)}
+					class="mb-4 flex items-center gap-1"
+				>
+					<h3>Advanced Settings</h3>
+					<span class={showAdvancedConfig ? 'rotate-90' : ''}>
+						<IconChevronRight />
+					</span>
+				</button>
+				{#if showAdvancedConfig}
+					<div class="config-item column var-height">
+						<div class="flex items-center gap-1">
+							<h3>Full Post Text</h3>
+							<IconHelp id="full-post-text-tooltip" />
+							<Popover class="w-64 text-sm " triggeredBy="#full-post-text-tooltip">
+								<div class="information flex flex-col gap-4 p-4">
+									<p class="mb-2">
+										By default, embedded X posts can only display up to 140 characters of text. If
+										you want to display more, you can copy and paste the full text from the original
+										post here. post2html will automatically process the text to convert hashtags and
+										mentions into clickable links.
+									</p>
+								</div>
+							</Popover>
+						</div>
+						<Textarea
+							placeholder="Paste in the full post text here"
+							bind:value={fullPostText}
+							on:input={() => setFullPostText()}
+						></Textarea>
+					</div>
+				{/if}
+			</div>
 		</div>
-	</div>
-	<Hr />
-	<div id="code-section">
-		<Code copyText={postFinalHTML} />
-		<p>Size: {postFinalHTML.length} bytes</p>
-	</div>
-{/if}
+		<Hr />
+		<div id="code-section">
+			<Code copyText={postFinalHTML} />
+			<p>Size: {postFinalHTML.length} bytes</p>
+		</div>
+	{/if}
+{:catch error}
+	<p>Error: {error}</p>
+{/await}
 
 <style lang="scss">
 	@import '../../routes/styles.scss';
