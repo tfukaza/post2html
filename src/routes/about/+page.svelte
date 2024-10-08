@@ -35,13 +35,17 @@
 				`script><style>*{margin: 0;padding: 0;box-sizing: border-box;}.x-post{display: block;border: 1px solid #ccc;background-color: #ffffff;border-radius: 8px;margin: 0px;box-sizing: border-box;margin: 0px auto 0px auto;font-family: sans-serif;max-width: 500px;container-type: inline-size;overflow: hidden;position: relative;cursor: pointer;}.x-post:hover:not(:has(a:hover)){background-color: #f9f9f9;transition: background-color 0.2s;}.x-post .profile{display: grid;grid-template-columns: 50px 1fr;grid-template-rows: 1fr 1fr;-moz-column-gap: 8px;column-gap: 8px;margin: 20px;margin-bottom: 0px;}.x-post .profile img{border-radius: 50%;width: 50px;height: 50px;grid-column: 1/2;grid-row: 1/3;}.x-post .profile .name{grid-column: 2/3;grid-row: 1/2;align-self: center;text-overflow: ellipsis;white-space: nowrap;overflow: hidden;font-weight: bold;font-size: 1em;color: #333;}.x-post .profile .screen-name{grid-column: 2/3;grid-row: 2/3;align-self: center;font-size: 0.9em;color: #666;}.x-post .post{word-wrap: break-word;margin: 20px;}.x-post .post a{color: #099ef5;text-decoration: none;}.x-post .post a:hover{text-decoration: underline;}@media only screen and (min-width: 800px){.has-media.has-text{max-width: 900px;display: grid;grid-template-columns: 1fr 1fr;justify-items: center;gap: 10px;}.has-media.has-text .main{grid-column: 1/2;width: 100%;padding: 20px;}}*{}.x-post .card{position: relative;display: block;width: calc(100% - 40px);margin: 0px 20px 20px 20px;border-radius: 8px;overflow: hidden;border: 1px solid #e0e0e0;display: grid;align-items: stretch;transition: transform 0.2s ease-in-out;}.x-post .card > *{grid-column: 1/2;grid-row: 1/2;}.x-post .card > a{z-index: 1;width: 100%;height: 100%;}.x-post .card > img{border-radius: 8px;width: 100%;height: auto;-o-object-fit: contain;object-fit: contain;}.x-post .card > div{position: absolute;background-color: rgba(0, 0, 0, 0.5);color: white;padding: 6px 10px;bottom: 8px;left: 8px;border-radius: 8px;}.x-post .card:hover{transform: scale(1.02);}@media only screen and (max-width: 500px){.x-post{max-width: 500px;}}@media only screen and (min-width: 800px){.has-media.has-text{max-width: 900px;display: grid;grid-template-columns: 1fr 1fr;grid-template-rows: 1fr auto 1fr;gap: 10px;align-items: center;}.has-media.has-text .main{grid-column: 1/2;grid-row: 2/3;}.has-media.has-text .card{margin: 10px 0;height: auto;width: calc(100% - 20px);grid-column: 2/3;grid-row: 1/4;}}*{} *{}</style><div class=&quot;x-post has-media has-text&quot; onclick=&quot;(function(e){if(e.target.tagName!==&apos;A&apos;)window.open(&apos;https://twitter.com/vercel/status/1820922005434040370&apos;, &apos;_blank&apos;).focus();})(arguments[0])&quot;><div class=&quot;main&quot;><div class=&quot;profile&quot;><img src=&quot;https://pbs.twimg.com/profile_images/1767351110228918272/3Pndc5OT_normal.png&quot; alt=&quot;Vercel&quot; ><div class=&quot;name&quot;>Vercel</div><div class=&quot;screen-name&quot;>@vercel</div></div><div class=&quot;post&quot;>Vercel AI SDK 3.3<br><br>• Tracing (OTEL with Datadog, Axiom, Sentry, and more)<br>• Multi-modal file attachments (\`useChat\`)<br>• Stream object generation (\`useObject\`)<br>• JSON for tools, structured object generation, and more<br><br></div></div><div class=&quot;card&quot;><a href=&quot;https://t.co/P4NV5pN9hL&quot; target=&quot;_blank&quot;></a><img src=&quot;https://pbs.twimg.com/card_img/1841218122046414852/RSydz_k-?format=png&amp;name=600x600&quot; alt=&quot;Vercel AI SDK 3.3 - Vercel&quot;><div><p>Vercel AI SDK 3.3 - Vercel</p></div></div></div>" style="border: none; width:100%; overflow:hidden" scrolling="no" onload="let a=()=>{this.style.height=this.contentDocument?this.contentDocument.body.scrollHeight+'px':0}; a(); new ResizeObserver(a).observe(this)"></iframe>`
 		},
 		3: {
-			official: '',
-			alternative: ''
+			official:
+				`<blockquote class="twitter-tweet"><p lang="en" dir="ltr">How did you feel after building your first PC? <a href="https://twitter.com/hashtag/FractalFriday?src=hash&amp;ref_src=twsrc%5Etfw">#FractalFriday</a> <a href="https://t.co/TsFAWo3TqO">pic.twitter.com/TsFAWo3TqO</a></p>&mdash; Fractal Design (@fractalofficial) <a href="https://twitter.com/fractalofficial/status/1507369263278997513?ref_src=twsrc%5Etfw">March 25, 2022</a></blockquote> <` +
+				`script async src="https://platform.twitter.com/widgets.js" charset="utf-8"><` +
+				`/script>`,
+			alternative: `<iframe srcdoc="<style>*{margin: 0;padding: 0;box-sizing: border-box;}.x-post{display: block;border: 1px solid #ccc;background-color: #ffffff;border-radius: 8px;margin: 0px;box-sizing: border-box;margin: 0px auto 0px auto;font-family: sans-serif;max-width: 500px;container-type: inline-size;overflow: hidden;position: relative;cursor: pointer;}.x-post:hover:not(:has(a:hover)){background-color: #f9f9f9;transition: background-color 0.2s;}.x-post .profile{display: grid;grid-template-columns: 50px 1fr;grid-template-rows: 1fr 1fr;-moz-column-gap: 8px;column-gap: 8px;margin: 20px;margin-bottom: 0px;}.x-post .profile img{border-radius: 50%;width: 50px;height: 50px;grid-column: 1/2;grid-row: 1/3;}.x-post .profile .name{grid-column: 2/3;grid-row: 1/2;align-self: center;text-overflow: ellipsis;white-space: nowrap;overflow: hidden;font-weight: bold;font-size: 1em;color: #333;}.x-post .profile .screen-name{grid-column: 2/3;grid-row: 2/3;align-self: center;font-size: 0.9em;color: #666;}.x-post .post{word-break: break-word;margin: 20px;}.x-post .post a{color: #099ef5;text-decoration: none;padding-right: 4px;}.x-post .post a:hover{text-decoration: underline;}@media only screen and (min-width: 800px){.has-media.has-text{max-width: 900px;display: grid;grid-template-columns: 1fr 1fr;justify-items: center;gap: 10px;}.has-media.has-text .main{grid-column: 1/2;width: 100%;padding: 20px;}}*{}.x-post .media{border-radius: 8px;display: grid;gap: 2px;justify-items: center;align-items: center;box-sizing: border-box;overflow: hidden;margin: 20px;}.x-post .media img{-o-object-fit: cover;object-fit: cover;}.x-post .media.num-media-1{grid-template-columns: 1fr;}.x-post .media.num-media-1 img{width: 100%;}.x-post .media.num-media-2{grid-template-columns: 1fr 1fr;}.x-post .media.num-media-2 img{height: 200px;width: 100%;}.x-post .media.num-media-3, .x-post .media.num-media-4{height: 300px;container-type: size;grid-template-columns: 1fr 1fr;grid-template-rows: 1fr 1fr;}.x-post .media.num-media-3 img, .x-post .media.num-media-4 img{width: 100%;height: 50cqh;}.x-post .media.num-media-3 img:nth-child(1){grid-column: 1/2;grid-row: 1/3;height: 100cqh;}@media only screen and (max-width: 500px){.x-post{max-width: 500px;}}@media only screen and (min-width: 800px){.has-media.has-text{max-width: 900px;display: grid;grid-template-columns: 1fr 1fr;grid-template-rows: 1fr auto 1fr;gap: 10px;}.has-media.has-text .main{grid-column: 1/2;grid-row: 2/3;}.has-media.has-text .media{margin: 10px 0;height: auto;width: calc(100% - 20px);grid-column: 2/3;grid-row: 1/4;}.has-media.has-text .media.num-media-2 img{height: 300px;}.has-media.has-text .media.num-media-1 img{border-radius: 8px;}.has-media.has-text .media.num-media-3, .has-media.has-text .media.num-media-4{min-height: 300px;}}*{} *{}</style><div class=&quot;x-post has-media has-text&quot; onclick=&quot;(function(e){if(e.target.tagName!==&apos;A&apos;)window.open(&apos;https://twitter.com/fractalofficial/status/1507369263278997513&apos;, &apos;_blank&apos;).focus();})(arguments[0])&quot;><div class=&quot;main&quot;><div class=&quot;profile&quot;><img src=&quot;https://pbs.twimg.com/profile_images/1663818212616687616/gXQcNBbN_normal.jpg&quot; alt=&quot;Fractal Design&quot; ><div class=&quot;name&quot;>Fractal Design</div><div class=&quot;screen-name&quot;>@fractalofficial</div></div><div class=&quot;post&quot;>How did you feel after building your first PC? <br><a href=&quot;https://x.com/hashtag/FractalFriday&quot; target=&quot;_blank&quot;>#FractalFriday</a></div></div><div class=&quot;media num-media-1 media-0&quot;><img src=&quot;https://pbs.twimg.com/media/FOs-33oXMA4TC0i?format=jpg&amp;name=medium&quot; alt=&quot;pic.x.com/TsFAWo3TqO&quot; id=&quot;media-0&quot;></div></div>" style="border: none; width:100%; overflow:hidden" scrolling="no" onload="let a=()=>{this.style.height=this.contentDocument?this.contentDocument.body.scrollHeight+'px':0}; a(); new ResizeObserver(a).observe(this)"></iframe>`
 		}
 	};
 
-	let officialPostHTML = benchPostHTML[1].official;
-	let alternativePostHTML = benchPostHTML[1].alternative;
+	let selectedPost = '1';
+	$: officialPostHTML = benchPostHTML[selectedPost].official;
+	$: alternativePostHTML = benchPostHTML[selectedPost].alternative;
 
 	let benchStartTime = 0;
 	let officialElapsedTime = 0;
@@ -50,10 +54,10 @@
 	let alternativeDoneLoading = false;
 	let benchWinner: 'official' | 'alternative' | 'tie' = 'tie';
 
-	function selectSamplePost(event: CustomEvent) {
-		officialPostHTML = benchPostHTML[event.target.value].official;
-		alternativePostHTML = benchPostHTML[event.target.value].alternative;
-	}
+	// function selectSamplePost(event: CustomEvent) {
+	// 	officialPostHTML = benchPostHTML[event.target.value].official;
+	// 	alternativePostHTML = benchPostHTML[event.target.value].alternative;
+	// }
 
 	let frame = 0;
 	function updateTimer() {
@@ -164,7 +168,7 @@
 	<div id="embed-bench" class="mt-32">
 		<div class="flex gap-4">
 			<Select items={samplePlatforms} bind:value={selectedPlatform} />
-			<Select items={benchSamplePosts} value={'1'} on:change={(e) => selectSamplePost(e)} />
+			<Select items={benchSamplePosts} bind:value={selectedPost} />
 			<Button size="lg" on:click={reloadEmbed}>Start</Button>
 		</div>
 		<div class="grid grid-cols-2 gap-4">
@@ -211,12 +215,9 @@
 	</p>
 
 	<div id="embed-responsive" class="mt-10">
-		<Select items={benchSamplePosts} value={'1'} on:change={(e) => selectSamplePost(e)} />
+		<Select items={benchSamplePosts} bind:value={selectedPost} />
 		<div id="draggable-container">
 			<div id="draggable-content" style="width: {responsiveWidth}px;" bind:this={dragContent}>
-				<!-- <div>
-					<iframe srcdoc={officialPostHTML} on:load={loadedOfficialPost}></iframe>
-				</div> -->
 				<div style={`width: ${(responsiveWidth * 4) / 3}px;`}>
 					{@html alternativePostHTML}
 				</div>
