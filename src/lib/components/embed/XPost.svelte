@@ -23,7 +23,8 @@
 	 */
 	function processText(postJsonData: ProcessedXData): string {
 		// Replace each display_url with an anchor tag
-
+		console.debug('Processing text');
+		console.debug(postJsonData);
 		if (postJsonData.text === undefined) {
 			return '';
 		}
@@ -42,11 +43,21 @@
 		// Replace each hashtag with an anchor tag
 		if (postJsonData.hashTags !== undefined) {
 			postJsonData.hashTags.forEach((hashTag) => {
+				console.log(hashTag);
 				text = text.replace(
 					'#' + hashTag.text,
-					`<a href="https://twitter.com/hashtag/${hashTag.text}" target="_blank">#${hashTag.text}</a>`
+					`<a href="https://x.com/hashtag/${hashTag.text}" target="_blank">#${hashTag.text}</a>`
 				);
 			});
+		}
+
+		// If the post is longer than 280 characters, automatically detect and replace links and hashtags
+		if (postJsonData.text.length > 280) {
+			text = text.replace(/(https?:\/\/[^\s]+)/g, `<a href="$1" target="_blank">$1</a>`);
+			text = text.replace(
+				/(#[\w]+)/g,
+				(match) => `<a href="https://x.com/hashtag/${match.slice(1)}" target="_blank">${match}</a>`
+			);
 		}
 		// Remove any media links from text
 		if (postJsonData.media !== undefined) {

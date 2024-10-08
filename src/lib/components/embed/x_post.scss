@@ -65,12 +65,13 @@
 	}
 
 	.post {
-		word-wrap: break-word;
+		word-break: break-word;
 		margin: 20px;
 
 		a {
 			color: #099ef5;
 			text-decoration: none;
+			padding-right: 4px;
 
 			&:hover {
 				text-decoration: underline;
