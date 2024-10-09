@@ -16,6 +16,7 @@
 	max-width: 500px;
 	container-type: inline-size;
 	overflow: hidden;
+	position: relative;
 
 	cursor: pointer;
 	// Only hover when an anchor child element is not being hovered
@@ -64,12 +65,13 @@
 	}
 
 	.post {
-		word-wrap: break-word;
+		word-break: break-word;
 		margin: 20px;
 
 		a {
 			color: #099ef5;
 			text-decoration: none;
+			padding-right: 4px;
 
 			&:hover {
 				text-decoration: underline;

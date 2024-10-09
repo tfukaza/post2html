@@ -42,6 +42,8 @@
 		margin: 16px 0;
 		border-radius: 4px;
 
+		z-index: 0;
+
 		> div {
 			background-color: #393943;
 			overflow-x: scroll;
@@ -66,7 +68,7 @@
 		position: absolute;
 		top: 5px;
 		right: 5px;
-		z-index: 10;
+		z-index: 5;
 
 		background-color: #46464d;
 		border: 1.4px solid rgb(117, 118, 125);

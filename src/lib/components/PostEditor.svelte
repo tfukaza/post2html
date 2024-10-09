@@ -1,28 +1,34 @@
 <script lang="ts">
-	import type { ProcessedXData, XPostConfig } from '$lib/x_types';
+	import type { ProcessedXData, OriginalXData } from '$lib/x_types';
 	import { processXJson } from '$lib/x_process';
 	import { postJson, postHTML } from '$components/store';
 
-	import * as Select from '$lib/components/ui/select';
-	import * as Tooltip from '$lib/components/ui/tooltip';
 	import IconHelp from '~icons/material-symbols/help';
+	import IconChevronRight from '~icons/material-symbols/chevron-right';
 	import Code from '$components/Code.svelte';
-	import { Input } from '$lib/components/ui/input';
-	import { Button } from '$lib/components/ui/button';
-	import { Switch } from '$lib/components/ui/switch/index.js';
+	import { Button } from 'flowbite-svelte';
+	import { Popover } from 'flowbite-svelte';
+	import { Toggle } from 'flowbite-svelte';
+	import { Select, Label } from 'flowbite-svelte';
+	import { Textarea } from 'flowbite-svelte';
+	import { Hr } from 'flowbite-svelte';
+	import { Spinner } from 'flowbite-svelte';
 
 	let postJsonData: ProcessedXData | null = null;
-	postJson.subscribe((value) => {
-		postJsonData = value;
-	});
-
+	let postDataPromise: Promise<boolean> | null = null;
 	let postURL: string = '';
 	let disableSubmit = !checkUrlValidity(postURL);
+	let fetchProgress = 0;
 
-	function checkUrlValidity(url: string): boolean {
-		// A valid url contains 19 digits of numbers
-		const regex = /\d{19}/;
-		return regex.test(url);
+	function checkUrlValidity(url: string): [string, string] | null {
+		// A valid X post url is in the following format
+		// [username]/status/[19 digit number]
+		const regex = /([a-zA-Z0-9_]){4,15}\/status\/([0-9]{19})$/;
+		const match = url.match(regex);
+		if (match) {
+			return [match[0], match[1]];
+		}
+		return null;
 	}
 
 	function getPostID(url: string): string {
@@ -35,23 +41,44 @@
 		return '';
 	}
 
-	function onSubmit(event: MouseEvent) {
+	function handleUrlChange(url: string) {
+		const result = checkUrlValidity(url);
+		if (result) {
+			const [username, postID] = result;
+			disableSubmit = false;
+		} else {
+			disableSubmit = true;
+		}
+	}
+	function handleSubmit(event: MouseEvent) {
+		fetchProgress = 0;
+		postDataPromise = fetchPostData(event);
+	}
+
+	async function fetchPostData(event: MouseEvent) {
+		fetchProgress = 16;
 		const postID = getPostID(postURL);
 		if (postID === '') {
-			console.error('Invalid post ID');
-			return;
+			throw new Error('Invalid post ID');
 		}
-		fetch(`/api/proxy_x?post-id=${postID}`)
-			.then((response) => response.json())
-			.then((data) => {
-				postJson.update((value) => {
-					return processXJson(data);
-				});
-			});
+		fetchProgress = 32;
+		const response = await fetch(`/api/proxy_x?post-id=${postID}`);
+		const data: OriginalXData = await response.json();
+		fetchProgress = 48;
+		const processedData = processXJson(data);
+		fetchProgress = 64;
+		postJson.update((_: ProcessedXData) => {
+			return processedData;
+		});
+		fetchProgress = 80;
+		postJsonData = processedData;
+		fetchProgress = 100;
+		return true;
 	}
 
 	function setConfig(property: string, value: any) {
-		postJson.update((v) => {
+		console.log(property, value);
+		postJson.update((v: ProcessedXData) => {
 			v.config[property] = value;
 			return { ...v };
 		});
@@ -61,35 +88,65 @@
 	postHTML.subscribe((value) => {
 		postFinalHTML = value;
 	});
+
+	let fullPostText = '';
+
+	function setFullPostText() {
+		if (!postJson) return;
+
+		postJson.update((v: ProcessedXData) => {
+			v.text = fullPostText;
+			return v;
+		});
+	}
+
+	let showAdvancedConfig = false;
 </script>
 
-<div class="divided">
-	<h3>1. Paste the Link</h3>
-	<span></span>
+<div class="flex flex-col gap-4">
+	<h2>post2html</h2>
 </div>
+
+<Hr />
+
 <div id="url-section">
 	<form>
-		<Input
-			type="text"
+		<Textarea
 			placeholder="Paste the X (Twitter) link here"
 			bind:value={postURL}
-			on:input={() => (disableSubmit = !checkUrlValidity(postURL))}
-		/>
-		<Button class={disableSubmit ? 'disable' : ''} on:click={onSubmit}>Submit</Button>
+			on:input={() => handleUrlChange(postURL)}
+			style={postURL.length > 0 && disableSubmit ? 'box-shadow:inset 0 0 3px 3px #ffccc7;' : ''}
+		></Textarea>
+
+		<Button on:click={handleSubmit} disabled={disableSubmit} class="flex items-center gap-2">
+			{#await postDataPromise}
+				<Spinner size="4" />
+				Submitting...
+			{:then success}
+				{#if disableSubmit}
+					Invalid X post URL
+				{:else}
+					Submit
+				{/if}
+			{:catch error}
+				Error
+			{/await}
+		</Button>
 	</form>
 </div>
-{#if postJsonData}
-	<div class="divided">
-		<h3>2. Configure</h3>
-		<span></span>
+{#await postDataPromise}
+	<div class="text-center">
+		<Spinner />
 	</div>
-	<div id="config-section">
-		<div class="config-item">
-			<div class="flex items-center gap-1">
-				<h3>Image Style</h3>
-				<Tooltip.Root>
-					<Tooltip.Trigger class="inline"><IconHelp /></Tooltip.Trigger>
-					<Tooltip.Content>
+{:then success}
+	{#if postJsonData}
+		<Hr />
+		<div id="config-section">
+			<div class="config-item">
+				<div class="flex items-center gap-1">
+					<h3>Image Style</h3>
+					<IconHelp id="image-style-tooltip" />
+					<Popover class="w-64 text-sm " triggeredBy="#image-style-tooltip">
 						<div class="information flex flex-col gap-4 p-4">
 							<p class="mb-2">Choose the style of the images in the post</p>
 							<div class="flex flex-row justify-center gap-8">
@@ -122,31 +179,25 @@
 								of the embedding is larger compared to the grid layout.
 							</p>
 						</div>
-					</Tooltip.Content>
-				</Tooltip.Root>
+					</Popover>
+				</div>
+				<Label>
+					<Select
+						class=""
+						items={[
+							{ value: 'grid', name: 'Grid' },
+							{ value: 'carousel', name: 'Carousel' }
+						]}
+						size="sm"
+						on:change={(e) => setConfig('imageStyle', e && e.target ? e.target.value : 'grid')}
+					/>
+				</Label>
 			</div>
-			<Select.Root
-				selected={{
-					value: postJsonData.config.imageStyle ? postJsonData.config.imageStyle : 'grid',
-					label: postJsonData.config.imageStyle ? postJsonData.config.imageStyle : 'Grid'
-				}}
-				onSelectedChange={(e) => setConfig('imageStyle', e.value)}
-			>
-				<Select.Trigger class="w-[180px]">
-					<Select.Value placeholder="Select..." />
-				</Select.Trigger>
-				<Select.Content>
-					<Select.Item value="grid">Grid</Select.Item>
-					<Select.Item value="carousel">Carousel</Select.Item>
-				</Select.Content>
-			</Select.Root>
-		</div>
-		<div class="config-item">
-			<div class="flex items-center gap-1">
-				<h3>Show full size image</h3>
-				<Tooltip.Root>
-					<Tooltip.Trigger class="inline"><IconHelp /></Tooltip.Trigger>
-					<Tooltip.Content>
+			<div class="config-item">
+				<div class="flex items-center gap-1">
+					<h3>Show full size image</h3>
+					<IconHelp id="show-full-size-tooltip" />
+					<Popover class="w-64 text-sm " triggeredBy="#show-full-size-tooltip">
 						<div class="information flex flex-col gap-4 p-4">
 							<p class="mb-2">
 								If enabled, when a user clicks or taps on an image, the image will expand to fill
@@ -155,27 +206,60 @@
 							</p>
 
 							<p>To close the image, the user can click or tap on the image again.</p>
-						</div></Tooltip.Content
-					>
-				</Tooltip.Root>
+						</div>
+					</Popover>
+				</div>
+
+				<Toggle
+					on:change={(e) => setConfig('imageFull', e.target.checked)}
+					checked={postJsonData.config.imageFull}
+				/>
 			</div>
 
-			<Switch
-				id="image-full"
-				onCheckedChange={(e) => setConfig('imageFull', e)}
-				checked={postJsonData.config.imageFull}
-			/>
+			<div id="advanced-config">
+				<button
+					on:click={() => (showAdvancedConfig = !showAdvancedConfig)}
+					class="mb-4 flex items-center gap-1"
+				>
+					<h3>Advanced Settings</h3>
+					<span class={showAdvancedConfig ? 'rotate-90' : ''}>
+						<IconChevronRight />
+					</span>
+				</button>
+				{#if showAdvancedConfig}
+					<div class="config-item column var-height">
+						<div class="flex items-center gap-1">
+							<h3>Full Post Text</h3>
+							<IconHelp id="full-post-text-tooltip" />
+							<Popover class="w-64 text-sm " triggeredBy="#full-post-text-tooltip">
+								<div class="information flex flex-col gap-4 p-4">
+									<p class="mb-2">
+										By default, embedded X posts can only display up to 140 characters of text. If
+										you want to display more, you can copy and paste the full text from the original
+										post here. post2html will automatically process the text to convert hashtags and
+										mentions into clickable links.
+									</p>
+								</div>
+							</Popover>
+						</div>
+						<Textarea
+							placeholder="Paste in the full post text here"
+							bind:value={fullPostText}
+							on:input={() => setFullPostText()}
+						></Textarea>
+					</div>
+				{/if}
+			</div>
 		</div>
-	</div>
-	<div class="divided">
-		<h3>3. Copy the Code</h3>
-		<span></span>
-	</div>
-	<div id="code-section">
-		<Code copyText={postFinalHTML} />
-		<p>Size: {postFinalHTML.length} bytes</p>
-	</div>
-{/if}
+		<Hr />
+		<div id="code-section">
+			<Code copyText={postFinalHTML} />
+			<p>Size: {postFinalHTML.length} bytes</p>
+		</div>
+	{/if}
+{:catch error}
+	<p>Error: {error}</p>
+{/await}
 
 <style lang="scss">
 	@import '../../routes/styles.scss';
@@ -250,45 +334,26 @@
 		}
 	}
 
-	.divided {
-		width: 100%;
-		margin-bottom: 16px;
-		display: flex;
-		flex-direction: row;
-		align-items: center;
-		gap: 10px;
-
-		h3 {
-			font-size: 0.9rem;
-
-			margin: 0;
-			width: max-content;
-		}
-		span {
-			margin: 0;
-			flex-grow: 1;
-
-			height: 2px;
-			background-color: rgb(237, 237, 237);
-			border-radius: 1px;
-			transform: translateY(2px);
-		}
-	}
-
 	.config-item {
 		display: flex;
-		flex-direction: row;
-		gap: 20px;
+		position: relative;
+		// z-index: 0;
+
 		align-items: center;
-		margin-bottom: 16px;
+		margin-bottom: var(--spacing-4);
+		width: 100%;
 		justify-content: space-between;
 
-		&:first-child {
-			width: max-content;
+		min-height: 40px;
+
+		&.row {
+			flex-direction: row;
 		}
 
-		&:last-child {
-			margin-bottom: 0;
+		&.column {
+			align-items: flex-start;
+			flex-direction: column;
+			gap: var(--spacing-5);
 		}
 	}
 
@@ -303,7 +368,15 @@
 		form {
 			width: 100%;
 			display: flex;
+			flex-direction: column;
 			gap: 16px;
+
+			textarea {
+				height: 80px;
+				border-radius: 10px;
+				padding: 10px;
+				border: 1px solid rgb(223, 223, 223);
+			}
 		}
 	}
 
@@ -313,6 +386,11 @@
 			font-family: monospace;
 			text-align: right;
 		}
+	}
+
+	#advanced-config {
+		border-left: 2px solid rgb(255, 85, 0);
+		padding-left: var(--spacing-4);
 	}
 
 	.preview-container {

@@ -14,10 +14,6 @@
 
 <main>
 	<section id="sidebar">
-		<div id="header">
-			<h1>post2html</h1>
-		</div>
-
 		<PostEditor />
 	</section>
 	<section id="preview">
@@ -30,7 +26,7 @@
 
 	main {
 		display: grid;
-		grid-template-columns: 350px 1fr;
+		grid-template-columns: 400px 1fr;
 		width: 100vw;
 		height: 100vh;
 		flex-direction: row;

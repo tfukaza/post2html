@@ -13,6 +13,8 @@
 	import { postHTML, postJson } from '$components/store';
 	import { onMount } from 'svelte';
 
+	import { ButtonGroup, Button } from 'flowbite-svelte';
+
 	let postDom: Node | null = null;
 
 	let postPreviewHTML: string = '';
@@ -137,19 +139,12 @@
 <div id="preview-window" bind:this={previewContainer} class={previewMode}>
 	{#if postJsonData}
 		<div id="preview-options">
-			<Tabs.Root value="mobile">
-				<Tabs.List>
-					<Tabs.Trigger value="mobile" on:click={() => (previewMode = 'mobile')}
-						>Mobile</Tabs.Trigger
-					>
-					<Tabs.Trigger value="tablet" on:click={() => (previewMode = 'tablet')}
-						>Tablet</Tabs.Trigger
-					>
-					<Tabs.Trigger value="desktop" on:click={() => (previewMode = 'desktop')}
-						>Desktop</Tabs.Trigger
-					>
-				</Tabs.List>
-			</Tabs.Root>
+	
+			<ButtonGroup class="*:!ring-primary-700">
+				<Button on:click={() => (previewMode = 'mobile')}>Mobile</Button>
+				<Button on:click={() => (previewMode = 'tablet')}>Tablet</Button>
+				<Button on:click={() => (previewMode = 'desktop')}>Desktop</Button>
+			</ButtonGroup>
 		</div>
 
 		<div class={`preview-container ${previewMode}`}>
