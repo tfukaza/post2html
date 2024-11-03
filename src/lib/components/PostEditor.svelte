@@ -2,9 +2,11 @@
 	import type { ProcessedXData, OriginalXData } from '$lib/x_types';
 	import { processXJson } from '$lib/x_process';
 	import { postJson, postHTML } from '$components/store';
+	import { signIn, signOut } from '@auth/sveltekit/client'; // @ts-ignore
+	import { page } from '$app/stores';
 
-	import IconHelp from '~icons/material-symbols/help';
-	import IconChevronRight from '~icons/material-symbols/chevron-right';
+	import IconHelp from '~icons/material-symbols/help'; // @ts-ignore
+	import IconChevronRight from '~icons/material-symbols/chevron-right'; // @ts-ignore
 	import Code from '$components/Code.svelte';
 	import { Button } from 'flowbite-svelte';
 	import { Popover } from 'flowbite-svelte';
@@ -260,6 +262,23 @@
 {:catch error}
 	<p>Error: {error}</p>
 {/await}
+
+<div>
+	{#if $page.data?.session}
+		{#if $page.data.session.user?.image}
+			<img src={$page.data.session.user.image} class="avatar" alt="User Avatar" />
+		{/if}
+		<span class="signedInText">
+			<small>Signed in as</small><br />
+			<strong>{$page.data.session.user?.name ?? 'User'}</strong>
+		</span>
+		<button on:click={() => signOut()}> Sign Out </button>
+	{:else}
+		<div class="wrapper-form">
+			<button on:click={() => signIn('github')}>Sign In with GitHub</button>
+		</div>
+	{/if}
+</div>
 
 <style lang="scss">
 	@import '../../routes/styles.scss';
