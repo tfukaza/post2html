@@ -3,7 +3,7 @@ import { handle as authenticationHandle } from './auth';
 import { sequence } from '@sveltejs/kit/hooks';
 import type { Session } from '@auth/core/types';
 import type { RequestEvent } from '@sveltejs/kit';
-import { VERCEL_ENV, VERCEL_PROJECT_PRODUCTION_URL, VERCEL_BRANCH_URL } from '$env/dynamic/private';
+import { VERCEL_ENV, VERCEL_PROJECT_PRODUCTION_URL, VERCEL_BRANCH_URL } from '$env/static/private';
 
 declare global {
 	namespace App {
