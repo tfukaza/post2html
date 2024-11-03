@@ -3,6 +3,7 @@ import { handle as authenticationHandle } from './auth';
 import { sequence } from '@sveltejs/kit/hooks';
 import type { Session } from '@auth/core/types';
 import type { RequestEvent } from '@sveltejs/kit';
+import { VERCEL_ENV, VERCEL_PROJECT_PRODUCTION_URL, VERCEL_BRANCH_URL } from '$env/dynamic/private';
 
 declare global {
 	namespace App {
@@ -18,7 +19,13 @@ async function authorizationHandle({ event, resolve }: { event: RequestEvent; re
 		const session: Session | null = await event.locals.auth();
 		if (!session) {
 			// Redirect to the signin page
-			throw redirect(303, 'http://localhost:5173/signin');
+			if (VERCEL_ENV === 'production') {
+				throw redirect(303, 'https://' + VERCEL_PROJECT_PRODUCTION_URL + '/signin');
+			} else if (VERCEL_ENV === 'preview') {
+				throw redirect(303, 'https://' + VERCEL_BRANCH_URL + '/signin');
+			} else {
+				throw redirect(303, 'http://localhost:5173/signin');
+			}
 		}
 		event.locals.session = session;
 	}
